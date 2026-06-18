@@ -25,6 +25,14 @@
       --border-radius: 32px;
       --success: #27ae60;
       --error: #e74c3c;
+      
+      /* Card brand colors */
+      --visa-color: #1a1f71;
+      --mastercard-color: #eb001b;
+      --amex-color: #006fcf;
+      --discover-color: #ff6000;
+      --paypal-color: #003087;
+      --default-card: #555;
     }
 
     body {
@@ -240,6 +248,100 @@
       gap: 16px;
     }
 
+    /* ----- CARD DETECTION (new) ----- */
+    .card-input-wrapper {
+      position: relative;
+    }
+
+    .card-detection-badge {
+      display: none;
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: white;
+      pointer-events: none;
+      animation: fadeIn 0.3s ease;
+      z-index: 5;
+    }
+
+    .card-detection-badge.visible {
+      display: block;
+    }
+
+    .card-detection-badge.visa {
+      background: var(--visa-color);
+    }
+    .card-detection-badge.mastercard {
+      background: var(--mastercard-color);
+    }
+    .card-detection-badge.amex {
+      background: var(--amex-color);
+    }
+    .card-detection-badge.discover {
+      background: var(--discover-color);
+    }
+    .card-detection-badge.paypal {
+      background: var(--paypal-color);
+    }
+    .card-detection-badge.default-card {
+      background: var(--default-card);
+    }
+
+    .card-icons-detected {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+    .card-icons-detected .card-icon {
+      font-size: 2rem;
+      opacity: 0.2;
+      transition: all 0.3s ease;
+    }
+    .card-icons-detected .card-icon.active {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+    .card-icons-detected .card-icon.visa-icon { color: var(--visa-color); }
+    .card-icons-detected .card-icon.mastercard-icon { color: var(--mastercard-color); }
+    .card-icons-detected .card-icon.amex-icon { color: var(--amex-color); }
+    .card-icons-detected .card-icon.discover-icon { color: var(--discover-color); }
+    .card-icons-detected .card-icon.paypal-icon { color: var(--paypal-color); }
+
+    .card-icons-detected .card-icon.active.visa-icon { 
+      color: var(--visa-color); 
+      text-shadow: 0 0 20px rgba(26, 31, 113, 0.3);
+    }
+    .card-icons-detected .card-icon.active.mastercard-icon { 
+      color: var(--mastercard-color); 
+      text-shadow: 0 0 20px rgba(235, 0, 27, 0.3);
+    }
+    .card-icons-detected .card-icon.active.amex-icon { 
+      color: var(--amex-color); 
+      text-shadow: 0 0 20px rgba(0, 111, 207, 0.3);
+    }
+    .card-icons-detected .card-icon.active.discover-icon { 
+      color: var(--discover-color); 
+      text-shadow: 0 0 20px rgba(255, 96, 0, 0.3);
+    }
+    .card-icons-detected .card-icon.active.paypal-icon { 
+      color: var(--paypal-color); 
+      text-shadow: 0 0 20px rgba(0, 48, 135, 0.3);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-50%) scale(0.8); }
+      to { opacity: 1; transform: translateY(-50%) scale(1); }
+    }
+
+    /* ----- Card input with detection ----- */
     .form-group .card-icons {
       display: flex;
       gap: 12px;
@@ -288,7 +390,6 @@
       font-size: 1rem;
     }
 
-    /* ----- Success/Error States ----- */
     .message-box {
       display: none;
       padding: 20px 24px;
@@ -309,7 +410,6 @@
       border: 1px solid #f5c6cb;
     }
 
-    /* ----- Loading Spinner ----- */
     .spinner {
       display: none;
       width: 20px;
@@ -364,6 +464,9 @@
         font-size: 1rem;
         padding: 14px;
       }
+      .card-icons-detected .card-icon {
+        font-size: 1.6rem;
+      }
     }
   </style>
 </head>
@@ -384,7 +487,6 @@
     <section class="order-summary" id="orderSummary">
       <h2><i class="fas fa-receipt"></i> Order Summary</h2>
       <div id="orderContent">
-        <!-- Dynamically filled by JS -->
         <div style="text-align:center; padding:20px; color:#888;">
           <i class="fas fa-spinner fa-pulse"></i> Loading order details...
         </div>
@@ -395,7 +497,6 @@
     <section class="payment-form" id="paymentForm">
       <h2><i class="fas fa-credit-card"></i> Payment Information</h2>
 
-      <!-- Message Box -->
       <div class="message-box" id="messageBox"></div>
 
       <form id="checkoutForm" novalidate>
@@ -440,15 +541,21 @@
 
         <hr style="border: none; border-top: 2px solid #f0f0f0; margin: 24px 0;" />
 
-        <!-- Payment Details -->
+        <!-- Payment Details with Card Detection -->
         <div class="form-group">
           <label>Card Number <span class="required">*</span></label>
-          <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" required />
-          <div class="card-icons">
-            <i class="fab fa-cc-visa"></i>
-            <i class="fab fa-cc-mastercard"></i>
-            <i class="fab fa-cc-amex"></i>
-            <i class="fab fa-cc-paypal"></i>
+          <div class="card-input-wrapper">
+            <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" required />
+            <span class="card-detection-badge" id="cardBadge">Visa</span>
+          </div>
+          
+          <!-- Card icons with detection -->
+          <div class="card-icons-detected" id="cardIcons">
+            <i class="fab fa-cc-visa card-icon visa-icon" id="visaIcon"></i>
+            <i class="fab fa-cc-mastercard card-icon mastercard-icon" id="mastercardIcon"></i>
+            <i class="fab fa-cc-amex card-icon amex-icon" id="amexIcon"></i>
+            <i class="fab fa-cc-discover card-icon discover-icon" id="discoverIcon"></i>
+            <i class="fab fa-cc-paypal card-icon paypal-icon" id="paypalIcon"></i>
           </div>
         </div>
 
@@ -490,7 +597,7 @@
       'use strict';
 
       // -------------------------------------------------------------
-      // 1. CAR DATA (same as car-detail.html)
+      // 1. CAR DATA
       // -------------------------------------------------------------
       const carData = [{
         id: 'bmw-m4',
@@ -603,7 +710,7 @@
       }];
 
       // -------------------------------------------------------------
-      // 2. UTILITY: get URL parameter
+      // 2. UTILITY FUNCTIONS
       // -------------------------------------------------------------
       function getParam(param) {
         const urlParams = new URLSearchParams(window.location.search);
@@ -615,7 +722,96 @@
       }
 
       // -------------------------------------------------------------
-      // 3. Load car data and populate order summary
+      // 3. CARD DETECTION SYSTEM
+      // -------------------------------------------------------------
+      function detectCardType(cardNumber) {
+        const clean = cardNumber.replace(/\s/g, '');
+        if (!clean || clean.length < 2) return null;
+
+        // Visa: starts with 4
+        if (/^4/.test(clean)) return 'visa';
+        // Mastercard: starts with 51-55 or 2221-2720
+        if (/^5[1-5]/.test(clean) || /^2[2-7][2-7][0-9]/.test(clean)) return 'mastercard';
+        // Amex: starts with 34 or 37
+        if (/^3[4|7]/.test(clean)) return 'amex';
+        // Discover: starts with 6011, 65, 644-649, 622126-622925
+        if (/^6011/.test(clean) || /^65/.test(clean) || /^64[4-9]/.test(clean) || /^622[1-9][2-9][0-9]/.test(clean)) return 'discover';
+        // PayPal: starts with 8 or 9 (simplified detection for demo)
+        if (/^[89]/.test(clean)) return 'paypal';
+        
+        return 'default-card';
+      }
+
+      function getCardDisplayName(type) {
+        const names = {
+          'visa': 'Visa',
+          'mastercard': 'Mastercard',
+          'amex': 'American Express',
+          'discover': 'Discover',
+          'paypal': 'PayPal',
+          'default-card': 'Card'
+        };
+        return names[type] || 'Card';
+      }
+
+      function getCardColor(type) {
+        const colors = {
+          'visa': '#1a1f71',
+          'mastercard': '#eb001b',
+          'amex': '#006fcf',
+          'discover': '#ff6000',
+          'paypal': '#003087',
+          'default-card': '#555'
+        };
+        return colors[type] || '#555';
+      }
+
+      // -------------------------------------------------------------
+      // 4. CARD DETECTION UI UPDATE
+      // -------------------------------------------------------------
+      const cardInput = document.getElementById('cardNumber');
+      const cardBadge = document.getElementById('cardBadge');
+      const iconElements = {
+        visa: document.getElementById('visaIcon'),
+        mastercard: document.getElementById('mastercardIcon'),
+        amex: document.getElementById('amexIcon'),
+        discover: document.getElementById('discoverIcon'),
+        paypal: document.getElementById('paypalIcon')
+      };
+
+      function updateCardDetection() {
+        const value = cardInput.value;
+        const detectedType = detectCardType(value);
+        
+        // Reset all icons
+        Object.values(iconElements).forEach(icon => {
+          icon.classList.remove('active');
+        });
+
+        // Reset badge
+        cardBadge.classList.remove('visible', 'visa', 'mastercard', 'amex', 'discover', 'paypal', 'default-card');
+
+        if (detectedType && value.length >= 2) {
+          // Show badge with card name
+          cardBadge.textContent = getCardDisplayName(detectedType);
+          cardBadge.classList.add('visible', detectedType);
+          
+          // Highlight the corresponding icon
+          if (iconElements[detectedType]) {
+            iconElements[detectedType].classList.add('active');
+          }
+        } else if (value.length === 0) {
+          // Hide everything if empty
+          cardBadge.classList.remove('visible');
+        }
+      }
+
+      // Listen to card input
+      cardInput.addEventListener('input', updateCardDetection);
+      cardInput.addEventListener('keyup', updateCardDetection);
+
+      // -------------------------------------------------------------
+      // 5. Load order summary
       // -------------------------------------------------------------
       const orderContent = document.getElementById('orderContent');
       const messageBox = document.getElementById('messageBox');
@@ -643,7 +839,6 @@
           return;
         }
 
-        // Calculate tax and total (example: 15% tax)
         const taxRate = 0.15;
         const dailyRate = car.price;
         const tax = dailyRate * taxRate;
@@ -665,12 +860,11 @@
           </div>
         `;
 
-        // Store total in a data attribute for later use
         document.getElementById('checkoutForm').dataset.total = total.toFixed(2);
       }
 
       // -------------------------------------------------------------
-      // 4. Handle form submission
+      // 6. Form submission
       // -------------------------------------------------------------
       const form = document.getElementById('checkoutForm');
       const submitBtn = document.getElementById('submitBtn');
@@ -686,7 +880,6 @@
         } else if (type === 'error') {
           messageBox.classList.add('error');
         }
-        // Auto hide after 5 seconds
         setTimeout(() => {
           messageBox.className = 'message-box';
         }, 5000);
@@ -695,7 +888,6 @@
       form.addEventListener('submit', function(e) {
         e.preventDefault();
 
-        // Validate form
         const fullName = document.getElementById('fullName').value.trim();
         const email = document.getElementById('email').value.trim();
         const phone = document.getElementById('phone').value.trim();
@@ -713,20 +905,17 @@
           return;
         }
 
-        // Basic email validation
         if (!email.includes('@') || !email.includes('.')) {
           showMessage('Please enter a valid email address.', 'error');
           return;
         }
 
-        // Basic card validation (simple length check)
         const cardClean = cardNumber.replace(/\s/g, '');
         if (cardClean.length < 13 || cardClean.length > 19) {
           showMessage('Please enter a valid card number (13-19 digits).', 'error');
           return;
         }
 
-        // Date validation
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const pickup = new Date(pickupDate);
@@ -741,20 +930,17 @@
           return;
         }
 
-        // Simulate payment processing
         submitBtn.disabled = true;
         btnText.textContent = 'Processing...';
         btnIcon.style.display = 'none';
         btnSpinner.style.display = 'inline-block';
 
         setTimeout(() => {
-          // Success!
           showMessage('✅ Booking confirmed! Your rental has been reserved. A confirmation email has been sent.', 'success');
           btnText.textContent = '✓ Booked!';
           btnSpinner.style.display = 'none';
           submitBtn.disabled = false;
 
-          // Log the booking details
           const carId = getParam('carId');
           const car = findCarById(carId);
           console.log('===== BOOKING CONFIRMED =====');
@@ -763,9 +949,9 @@
           console.log('Pickup:', pickupLocation, pickupDate);
           console.log('Return:', returnDate);
           console.log('Total:', form.dataset.total);
+          console.log('Card Type:', detectCardType(cardNumber) || 'Unknown');
           console.log('==============================');
 
-          // Reset button after 3 seconds
           setTimeout(() => {
             btnText.textContent = 'Confirm & Book';
             btnIcon.style.display = 'inline-block';
@@ -776,7 +962,7 @@
       });
 
       // -------------------------------------------------------------
-      // 5. Card number formatting (auto-add spaces)
+      // 7. Card formatting
       // -------------------------------------------------------------
       document.getElementById('cardNumber').addEventListener('input', function(e) {
         let value = this.value.replace(/\D/g, '');
@@ -787,9 +973,9 @@
           formatted += value[i];
         }
         this.value = formatted;
+        updateCardDetection();
       });
 
-      // Expiry date formatting (MM/YY)
       document.getElementById('expiryDate').addEventListener('input', function(e) {
         let value = this.value.replace(/\D/g, '');
         if (value.length > 4) value = value.slice(0, 4);
@@ -807,13 +993,12 @@
         }
       });
 
-      // CVV max length
       document.getElementById('cvv').addEventListener('input', function(e) {
         this.value = this.value.replace(/\D/g, '').slice(0, 4);
       });
 
       // -------------------------------------------------------------
-      // 6. Set default dates (today + 3 days, + 5 days)
+      // 8. Set default dates
       // -------------------------------------------------------------
       function setDefaultDates() {
         const today = new Date();
@@ -834,15 +1019,11 @@
       }
 
       // -------------------------------------------------------------
-      // 7. INIT
+      // 9. INIT
       // -------------------------------------------------------------
       loadOrder();
       setDefaultDates();
-
-      // Also load order if car ID changes (for demo)
-      window.addEventListener('load', function() {
-        // any extra init
-      });
+      updateCardDetection();
 
     })();
   </script>

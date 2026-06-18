@@ -31,6 +31,7 @@
       --light-gray: #f5f5f5;
       --white: #ffffff;
       --shadow: 0 20px 40px -12px rgba(0,0,0,0.25);
+      --gold: #d4af37;
     }
 
     .container {
@@ -70,7 +71,6 @@
       margin-right: 6px;
     }
 
-    /* ----- Header Navigation (top right) ----- */
     .header-nav {
       display: flex;
       align-items: center;
@@ -108,7 +108,6 @@
       color: var(--metallic);
     }
 
-    /* Side menu (mobile) */
     .side-menu {
       position: fixed;
       top: 0;
@@ -350,6 +349,117 @@
       box-shadow: 0 6px 16px rgba(0,0,0,0.15);
     }
 
+    /* ----- BEST SELLER SECTION ----- */
+    .best-seller {
+      padding: 60px 0 80px;
+      background: var(--light-gray);
+    }
+
+    .best-seller-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+      background: white;
+      border-radius: 32px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      border: 1px solid #f0f0f0;
+    }
+
+    .best-seller-content {
+      padding: 48px 40px;
+    }
+
+    .best-seller-badge {
+      display: inline-block;
+      background: var(--gold);
+      color: white;
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      padding: 6px 18px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+    }
+
+    .best-seller-content h2 {
+      font-size: 2.6rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--black);
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+
+    .best-seller-content .subtitle {
+      font-size: 1.1rem;
+      color: #777;
+      margin-bottom: 20px;
+    }
+
+    .best-seller-content .description {
+      font-size: 1.05rem;
+      color: #555;
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+
+    .best-seller-specs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 24px;
+      margin-bottom: 28px;
+    }
+    .best-seller-specs .spec-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.95rem;
+      color: var(--dark-gray);
+    }
+    .best-seller-specs .spec-item i {
+      color: var(--metallic);
+      width: 20px;
+      font-size: 1.1rem;
+    }
+    .best-seller-specs .spec-item strong {
+      font-weight: 600;
+      color: var(--black);
+    }
+
+    .best-seller-price {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 20px;
+    }
+    .best-seller-price small {
+      font-weight: 400;
+      color: #777;
+      font-size: 1rem;
+    }
+
+    .best-seller .btn-rent {
+      padding: 14px 40px;
+      font-size: 1.05rem;
+    }
+
+    .best-seller-image {
+      width: 100%;
+      height: 100%;
+      min-height: 400px;
+      background: #eaeaea;
+      overflow: hidden;
+    }
+    .best-seller-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
     /* ----- ABOUT US PAGE (overlay) ----- */
     .about-page {
       display: none;
@@ -581,6 +691,26 @@
       .side-menu {
         display: flex;
       }
+      
+      .best-seller-wrapper {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+      .best-seller-content {
+        padding: 32px 24px;
+        order: 2;
+      }
+      .best-seller-image {
+        min-height: 250px;
+        order: 1;
+      }
+      .best-seller-content h2 {
+        font-size: 2rem;
+      }
+      .best-seller-specs {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
     }
 
     @media (max-width: 700px) {
@@ -602,6 +732,8 @@
       .hero { min-height: 70vh; }
       .hero-content h1 { font-size: 2rem; }
       .about-page .about-stats { grid-template-columns: 1fr; }
+      .best-seller-content h2 { font-size: 1.6rem; }
+      .best-seller-price { font-size: 1.6rem; }
     }
 
     @media (min-width: 769px) {
@@ -635,7 +767,6 @@
       <i class="fas fa-car-side"></i> LUXE<span>RENT</span>
     </div>
     
-    <!-- Header Navigation (top right - desktop) -->
     <div class="header-nav">
       <a href="#" id="aboutLinkDesktop"><i class="fas fa-info-circle"></i> About</a>
       <a href="#" id="contactLinkDesktop"><i class="fas fa-envelope"></i> Contact</a>
@@ -644,7 +775,6 @@
       </a>
     </div>
     
-    <!-- Hamburger Menu (mobile) -->
     <button class="menu-btn" id="menuBtn" aria-label="Open menu">
       <i class="fas fa-bars"></i>
     </button>
@@ -666,13 +796,13 @@
       </div>
     </section>
 
-    <!-- CAR LISTINGS -->
+    <!-- FEATURED FLEET -->
     <section class="listings" id="carListings">
       <div class="container">
         <h2 class="section-title">Featured fleet</h2>
         <div class="car-grid">
           <div class="car-card">
-            <img src="https://imgd.aeplcdn.com/664x374/n/cw/ec/176129/m4-competition-exterior-right-front-three-quarter-3.jpeg?isig=0&q=80." alt="BMW M4">
+            <img src="https://images.unsplash.com/photo-1553440563-9f1c3f8d6f2b?w=600&q=80" alt="BMW M4">
             <div class="car-info">
               <div class="car-name">BMW M4</div>
               <div class="car-price"><strong>$120</strong> / day</div>
@@ -688,7 +818,7 @@
             </div>
           </div>
           <div class="car-card">
-            <img src="https://asset.autocarindia.com/static/news/images/20260219_134046_a3b667dc.jpg?w=728&q=75" alt="Audi RS5">
+            <img src="https://images.unsplash.com/photo-1603584173876-7b6e8a1f29c5?w=600&q=80" alt="Audi RS5">
             <div class="car-info">
               <div class="car-name">Audi RS5</div>
               <div class="car-price"><strong>$130</strong> / day</div>
@@ -702,6 +832,46 @@
               <div class="car-price"><strong>$250</strong> / day</div>
               <a href="rentnow.html" class="btn-card">Rent</a>
             </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BEST SELLER SECTION -->
+    <section class="best-seller">
+      <div class="container">
+        <div class="best-seller-wrapper">
+          <!-- Left: Content -->
+          <div class="best-seller-content">
+            <span class="best-seller-badge"><i class="fas fa-crown" style="margin-right: 6px;"></i> Best Seller</span>
+            <h2>Porsche 911 Carrera</h2>
+            <p class="subtitle">The most requested sports car in our fleet</p>
+            <p class="description">
+              With its iconic design and thrilling performance, the Porsche 911 Carrera has become our most rented vehicle. 
+              Experience the perfect blend of luxury, precision, and pure driving pleasure that has made this sports car a legend.
+            </p>
+            
+            <div class="best-seller-specs">
+              <div class="spec-item"><i class="fas fa-cog"></i> <strong>Transmission:</strong> PDK Automatic</div>
+              <div class="spec-item"><i class="fas fa-tachometer-alt"></i> <strong>Engine:</strong> 3.0L Twin-Turbo H6</div>
+              <div class="spec-item"><i class="fas fa-horse-head"></i> <strong>Horsepower:</strong> 379 hp</div>
+              <div class="spec-item"><i class="fas fa-tachometer-alt"></i> <strong>0-60 mph:</strong> 3.4 seconds</div>
+              <div class="spec-item"><i class="fas fa-gas-pump"></i> <strong>Fuel:</strong> Petrol</div>
+              <div class="spec-item"><i class="fas fa-users"></i> <strong>Seats:</strong> 4</div>
+            </div>
+
+            <div class="best-seller-price">
+              $250 <small>/ day</small>
+            </div>
+
+            <a href="rentnow.html" class="btn-rent" style="display: inline-block;">
+              Rent Now <i class="fas fa-arrow-right" style="margin-left: 10px;"></i>
+            </a>
+          </div>
+
+          <!-- Right: Image -->
+          <div class="best-seller-image">
+            <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1000&q=80" alt="Porsche 911 Carrera - Best Seller">
           </div>
         </div>
       </div>
@@ -783,6 +953,7 @@
       </div>
       <div class="footer-col">
         <h4>Follow</h4>
+        <a href="https://www.whatsapp.com/" src="https://www.whatsapp.com/"><i class="fab fa-whatsapp"></i>WhatsApp</a>
         <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
         <a href="#"><i class="fab fa-facebook"></i> Facebook</a>
         <a href="#"><i class="fab fa-twitter"></i> X (Twitter)</a>
@@ -805,11 +976,8 @@
       const sideMenu = document.getElementById('sideMenu');
       const overlay = document.getElementById('sideOverlay');
       
-      // Desktop links
       const aboutLinkDesktop = document.getElementById('aboutLinkDesktop');
       const contactLinkDesktop = document.getElementById('contactLinkDesktop');
-      
-      // Mobile links
       const aboutLinkMobile = document.getElementById('aboutLinkMobile');
       const contactLinkMobile = document.getElementById('contactLinkMobile');
       
@@ -820,7 +988,6 @@
       const backFromAbout = document.getElementById('backFromAbout');
       const backFromContact = document.getElementById('backFromContact');
 
-      // Side menu functions
       function openMenu() {
         sideMenu.classList.add('open');
         overlay.classList.add('active');
@@ -841,7 +1008,6 @@
         if (e.key === 'Escape') closeMenu();
       });
 
-      // Show About Us page (from both desktop and mobile links)
       function showAbout(e) {
         e.preventDefault();
         closeMenu();
@@ -851,7 +1017,6 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
 
-      // Show Contact Us page (from both desktop and mobile links)
       function showContact(e) {
         e.preventDefault();
         closeMenu();
@@ -866,14 +1031,12 @@
       contactLinkDesktop.addEventListener('click', showContact);
       contactLinkMobile.addEventListener('click', showContact);
 
-      // Back to Home from About
       backFromAbout.addEventListener('click', function() {
         aboutPage.classList.remove('active');
         mainContent.style.display = 'block';
         window.scrollTo({ top: 0, behavior: 'smooth' });
       });
 
-      // Back to Home from Contact
       backFromContact.addEventListener('click', function() {
         contactPage.classList.remove('active');
         mainContent.style.display = 'block';
