@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Car Detail · Luxury Rent</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --black: #0b0b0b;
+      --dark-gray: #1f1f1f;
+      --metallic: #a8a8a8;
+      --light-gray: #f5f5f5;
+      --white: #ffffff;
+      --shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.25);
+      --border-radius: 32px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--white);
+      color: var(--dark-gray);
+      line-height: 1.6;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 32px;
+      background: var(--white);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(2px);
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--black);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .logo span {
+      color: var(--metallic);
+      font-weight: 300;
+    }
+    .logo i {
+      color: var(--dark-gray);
+      margin-right: 6px;
+    }
+
+    .back-link {
+      text-decoration: none;
+      color: var(--dark-gray);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid #e0e0e0;
+      padding: 8px 20px;
+      border-radius: 40px;
+      transition: 0.2s;
+      font-size: 0.95rem;
+    }
+    .back-link:hover {
+      background: var(--black);
+      color: white;
+      border-color: var(--black);
+    }
+
+    .detail-container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 24px;
+    }
+
+    .loading-state,
+    .error-state {
+      text-align: center;
+      padding: 80px 20px;
+      font-size: 1.2rem;
+      color: #888;
+    }
+    .error-state i {
+      font-size: 2.4rem;
+      color: #c0392b;
+      display: block;
+      margin-bottom: 16px;
+    }
+
+    .car-detail-card {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      background: var(--white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      border: 1px solid #f0f0f0;
+      padding: 32px;
+    }
+
+    .car-detail-card .image-wrapper {
+      width: 100%;
+      height: 400px;
+      border-radius: 24px;
+      overflow: hidden;
+      background: #eaeaea;
+    }
+    .car-detail-card .image-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .car-detail-card .info-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .car-detail-card .car-title {
+      font-size: 2.8rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--black);
+      line-height: 1.2;
+    }
+
+    .car-detail-card .price-tag {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--black);
+    }
+    .car-detail-card .price-tag small {
+      font-weight: 400;
+      color: #777;
+      font-size: 1rem;
+    }
+
+    .car-detail-card .specs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px 24px;
+      background: var(--light-gray);
+      padding: 24px;
+      border-radius: 20px;
+      margin: 8px 0;
+    }
+    .specs-grid .spec-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1rem;
+      color: var(--dark-gray);
+    }
+    .specs-grid .spec-item i {
+      width: 24px;
+      color: var(--metallic);
+      font-size: 1.2rem;
+    }
+    .specs-grid .spec-item strong {
+      font-weight: 600;
+      color: var(--black);
+    }
+
+    .car-detail-card .description {
+      color: #555;
+      font-size: 1.05rem;
+      line-height: 1.7;
+    }
+
+    .btn-book {
+      display: inline-block;
+      background: var(--black);
+      color: white;
+      font-weight: 600;
+      font-size: 1.2rem;
+      padding: 16px 48px;
+      border-radius: 60px;
+      text-decoration: none;
+      letter-spacing: 0.3px;
+      box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.4);
+      transition: 0.2s;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+      align-self: flex-start;
+      margin-top: 12px;
+    }
+    .btn-book:hover {
+      background: #2a2a2a;
+      transform: scale(1.02);
+      box-shadow: 0 18px 32px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    @media (max-width: 900px) {
+      .car-detail-card {
+        grid-template-columns: 1fr;
+        gap: 32px;
+        padding: 24px;
+      }
+      .car-detail-card .image-wrapper {
+        height: 280px;
+      }
+      .car-detail-card .car-title {
+        font-size: 2.2rem;
+      }
+    }
+
+    @media (max-width: 500px) {
+      header {
+        padding: 16px 20px;
+      }
+      .logo {
+        font-size: 1.4rem;
+      }
+      .back-link {
+        font-size: 0.85rem;
+        padding: 6px 14px;
+      }
+      .detail-container {
+        padding: 0 16px;
+        margin: 24px auto;
+      }
+      .car-detail-card {
+        padding: 16px;
+      }
+      .car-detail-card .image-wrapper {
+        height: 200px;
+      }
+      .specs-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .btn-book {
+        width: 100%;
+        text-align: center;
+        padding: 14px 20px;
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <i class="fas fa-car-side"></i> LUXE<span>RENT</span>
+    </div>
+    <a href="rentnow.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to catalog</a>
+  </header>
+
+  <main class="detail-container" id="detailContainer">
+    <!-- Dynamic content will be injected here -->
+  </main>
+
+  <script>
+    (function() {
+      'use strict';
+
+      // -------------------------------------------------------------
+      // 1. SAMPLE DATA ARRAY – each car has a unique `id`
+      //    (must match the IDs in rentnow.html)
+      // -------------------------------------------------------------
+      const carData = [{
+        id: 'bmw-m4',
+        name: 'BMW M4',
+        price: 120,
+        transmission: 'Automatic',
+        type: 'Coupe',
+        fuel: 'Petrol',
+        image: 'https://imgd.aeplcdn.com/664x374/n/cw/ec/176129/m4-competition-exterior-right-front-three-quarter-3.jpeg?isig=0&q=80',
+        description: 'The BMW M4 delivers razor-sharp handling, a twin-turbo inline-6 engine, and a driver-focused cockpit. Perfect for thrill-seekers who demand performance and style.'
+      }, {
+        id: 'mercedes-c-class',
+        name: 'Mercedes C-Class',
+        price: 110,
+        transmission: 'Automatic',
+        type: 'Sedan',
+        fuel: 'Petrol',
+        image: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&q=80',
+        description: 'Refined and elegant, the Mercedes C-Class combines luxury with advanced technology. A smooth ride and premium interior make every journey first-class.'
+      }, {
+        id: 'audi-rs5',
+        name: 'Audi RS5',
+        price: 130,
+        transmission: 'Automatic',
+        type: 'Coupe',
+        fuel: 'Petrol',
+        image: 'https://asset.autocarindia.com/static/news/images/20260219_134046_a3b667dc.jpg?w=728&q=75',
+        description: 'The Audi RS5 is a performance masterpiece with a 444 hp V6, Quattro all-wheel drive, and a sculpted design that turns heads on every street.'
+      }, {
+        id: 'porsche-911',
+        name: 'Porsche 911',
+        price: 250,
+        transmission: 'Automatic',
+        type: 'Sports Car',
+        fuel: 'Petrol',
+        image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&q=80',
+        description: 'An icon reimagined. The Porsche 911 offers timeless design, rear-engine perfection, and exhilarating dynamics that define the sports car experience.'
+      }, {
+        id: 'lamborghini-urus',
+        name: 'Lamborghini Urus',
+        price: 380,
+        transmission: 'Automatic',
+        type: 'SUV',
+        fuel: 'Petrol',
+        image: 'https://images.unsplash.com/photo-1580274455191-1c62238fa333?w=800&q=80',
+        description: 'The world\'s first Super SUV. The Lamborghini Urus combines extreme performance with luxury and versatility, powered by a 641 hp V8 engine.'
+      }, {
+        id: 'ferrari-f8',
+        name: 'Ferrari F8',
+        price: 420,
+        transmission: 'Automatic',
+        type: 'Sports Car',
+        fuel: 'Petrol',
+        image: 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=800&q=80',
+        description: 'The Ferrari F8 Tributo is a mid-engine V8 marvel. With 710 hp and race-bred aerodynamics, it delivers pure Ferrari passion and performance.'
+      }, {
+        id: 'bentley-continental',
+        name: 'Bentley Continental',
+        price: 310,
+        transmission: 'Automatic',
+        type: 'Coupe',
+        fuel: 'Petrol',
+        image: 'https://hips.hearstapps.com/hmg-prod/images/2023-bentley-continental-gt-s-coupe-101-1654526518.jpg',
+        description: 'The Bentley Continental GT is the epitome of grand touring. With a W12 engine and handcrafted luxury, it offers an unparalleled driving experience.'
+      }, {
+        id: 'rolls-royce-ghost',
+        name: 'Rolls-Royce Ghost',
+        price: 490,
+        transmission: 'Automatic',
+        type: 'Sedan',
+        fuel: 'Petrol',
+        image: 'https://images.unsplash.com/photo-1631295868223-63265b40d9e4?w=800&q=80',
+        description: 'The Rolls-Royce Ghost is a masterpiece of luxury and engineering. Every detail is crafted to deliver the pinnacle of automotive refinement.'
+      }, {
+        id: 'maserati-mc20',
+        name: 'Maserati MC20',
+        price: 360,
+        transmission: 'Automatic',
+        type: 'Sports Car',
+        fuel: 'Petrol',
+        image: 'https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?w=800&q=80',
+        description: 'The Maserati MC20 is a pure-bred super sports car. The innovative V6 engine and lightweight construction deliver breathtaking performance.'
+      }, {
+        id: 'aston-martin-dbx',
+        name: 'Aston Martin DBX',
+        price: 290,
+        transmission: 'Automatic',
+        type: 'SUV',
+        fuel: 'Petrol',
+        image: 'https://www.thecarexpert.co.uk/wp-content/uploads/2021/04/Aston_Martin_DBX__Stirling_Green__AML_1__117-JPG.jpeg.webp',
+        description: 'The Aston Martin DBX is the brand\'s first SUV, combining sports car dynamics with luxury and practicality for the modern family.'
+      }, {
+        id: 'mclaren-720s',
+        name: 'McLaren 720S',
+        price: 460,
+        transmission: 'Automatic',
+        type: 'Sports Car',
+        fuel: 'Petrol',
+        image: 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=800&q=80',
+        description: 'The McLaren 720S is a technological tour de force. With a 710 hp V8 and advanced aerodynamics, it redefines the supercar experience.'
+      }, {
+        id: 'lexus-lc500',
+        name: 'Lexus LC 500',
+        price: 180,
+        transmission: 'Automatic',
+        type: 'Coupe',
+        fuel: 'Petrol',
+        image: 'https://images.unsplash.com/photo-1563720223185-11003d516935?w=800&q=80',
+        description: 'The Lexus LC 500 is a stunning grand tourer that combines a naturally aspirated V8 with Japanese craftsmanship and cutting-edge technology.'
+      }];
+
+      // -------------------------------------------------------------
+      // 2. UTILITY: get URL parameter by name
+      // -------------------------------------------------------------
+      function getParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+      }
+
+      // -------------------------------------------------------------
+      // 3. find car by id
+      // -------------------------------------------------------------
+      function findCarById(id) {
+        return carData.find(car => car.id === id);
+      }
+
+      // -------------------------------------------------------------
+      // 4. render the detail page
+      // -------------------------------------------------------------
+      const container = document.getElementById('detailContainer');
+
+      function renderCarDetail(car) {
+        if (!car) {
+          container.innerHTML = `
+            <div class="error-state">
+              <i class="fas fa-exclamation-circle"></i>
+              <h2>Car not found</h2>
+              <p style="margin-top: 8px;">Sorry, we couldn't find a car with that ID.</p>
+              <a href="rentnow.html" style="display:inline-block; margin-top:24px; color:var(--black); font-weight:600; text-decoration:underline;">← Back to catalog</a>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = `
+          <div class="car-detail-card">
+            <div class="image-wrapper">
+              <img src="${car.image}" alt="${car.name}" loading="lazy" />
+            </div>
+            <div class="info-wrapper">
+              <h1 class="car-title">${car.name}</h1>
+              <div class="price-tag">
+                $${car.price} <small>/ day</small>
+              </div>
+              <div class="specs-grid">
+                <div class="spec-item"><i class="fas fa-cog"></i> <strong>Transmission:</strong> ${car.transmission}</div>
+                <div class="spec-item"><i class="fas fa-car"></i> <strong>Type:</strong> ${car.type}</div>
+                <div class="spec-item"><i class="fas fa-gas-pump"></i> <strong>Fuel:</strong> ${car.fuel}</div>
+                <div class="spec-item"><i class="fas fa-tag"></i> <strong>ID:</strong> ${car.id}</div>
+              </div>
+              <p class="description">${car.description}</p>
+              <button class="btn-book" id="bookNowBtn">
+                <i class="fas fa-calendar-check" style="margin-right: 10px;"></i> Rent Now
+              </button>
+            </div>
+          </div>
+        `;
+
+        // -------------------------------------------------------------
+        // 5. "Rent/Book Now" button event listener
+        // -------------------------------------------------------------
+        // Inside car-detail.html, replace the bookBtn click handler with:
+
+const bookBtn = document.getElementById('bookNowBtn');
+if (bookBtn) {
+  bookBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    // Redirect to checkout page with car ID
+    window.location.href = `info.html?carId=${car.id}`;
+  });
+}
+      }
+
+      // -------------------------------------------------------------
+      // 6. BOOT: read URL param, load matching car
+      // -------------------------------------------------------------
+      function init() {
+        container.innerHTML = `
+          <div class="loading-state">
+            <i class="fas fa-spinner fa-pulse" style="font-size:2.4rem; color:var(--metallic); display:block; margin-bottom:16px;"></i>
+            Loading car details...
+          </div>
+        `;
+
+        const carId = getParam('id');
+        if (!carId) {
+          container.innerHTML = `
+            <div class="error-state">
+              <i class="fas fa-exclamation-circle"></i>
+              <h2>Missing car ID</h2>
+              <p style="margin-top: 8px;">Please provide a valid car ID in the URL.</p>
+              <a href="rentnow.html" style="display:inline-block; margin-top:24px; color:var(--black); font-weight:600; text-decoration:underline;">← Back to catalog</a>
+            </div>
+          `;
+          return;
+        }
+
+        const car = findCarById(carId);
+        setTimeout(() => {
+          renderCarDetail(car);
+        }, 300);
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+</body>
+</html>

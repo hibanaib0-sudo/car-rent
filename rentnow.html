@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
+  <title>Luxury Rent · Rent Now</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #ffffff;
+      color: #1e1e1e;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    :root {
+      --black: #0b0b0b;
+      --dark-gray: #1f1f1f;
+      --silver: #c0c0c0;
+      --metallic: #a8a8a8;
+      --light-gray: #f5f5f5;
+      --white: #ffffff;
+      --shadow: 0 20px 40px -12px rgba(0,0,0,0.25);
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 32px;
+      background: var(--white);
+      border-bottom: 1px solid rgba(0,0,0,0.04);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(2px);
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--black);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .logo span {
+      color: var(--metallic);
+      font-weight: 300;
+    }
+    .logo i {
+      color: var(--dark-gray);
+      margin-right: 6px;
+    }
+
+    .back-home {
+      text-decoration: none;
+      color: var(--dark-gray);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid #e0e0e0;
+      padding: 8px 20px;
+      border-radius: 40px;
+      transition: 0.2s;
+      font-size: 0.95rem;
+    }
+    .back-home i {
+      font-size: 0.9rem;
+    }
+    .back-home:hover {
+      background: var(--black);
+      color: white;
+      border-color: var(--black);
+    }
+
+    .rent-now-page {
+      padding: 40px 24px 80px;
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    .page-title {
+      font-size: 2.4rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--black);
+      margin-bottom: 8px;
+      border-left: 6px solid var(--metallic);
+      padding-left: 20px;
+    }
+    .page-sub {
+      color: #555;
+      margin-bottom: 30px;
+      padding-left: 26px;
+      font-weight: 300;
+    }
+
+    .search-container {
+      padding: 0 12px;
+      margin-bottom: 40px;
+      display: flex;
+      justify-content: center;
+    }
+    .search-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+    }
+    .search-wrapper i {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--metallic);
+      font-size: 1.1rem;
+    }
+    #searchInput {
+      width: 100%;
+      padding: 16px 20px 16px 52px;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      border: 2px solid #eaeaea;
+      border-radius: 60px;
+      background: var(--white);
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+      outline: none;
+      color: var(--dark-gray);
+    }
+    #searchInput:focus {
+      border-color: var(--metallic);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+    }
+    #searchInput::placeholder {
+      color: #b0b0b0;
+      font-weight: 300;
+    }
+
+    .car-grid-rent {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 32px 28px;
+      padding: 0 12px;
+    }
+
+    .no-results {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 60px 20px;
+      color: #888;
+      font-size: 1.2rem;
+      font-weight: 300;
+      display: none;
+    }
+    .no-results i {
+      font-size: 2.4rem;
+      color: var(--metallic);
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .car-card-rent {
+      position: relative;
+      background: white;
+      border-radius: 32px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+      border: 1px solid #f0f0f0;
+      transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1), 
+                  box-shadow 0.35s ease,
+                  border-color 0.2s;
+      cursor: default;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .car-card-rent.hidden-card {
+      display: none;
+    }
+
+    .car-card-rent:hover {
+      transform: scale(1.05) translateY(-6px);
+      box-shadow: 0 30px 50px -12px rgba(0,0,0,0.3);
+      border-color: #bbb;
+      z-index: 10;
+    }
+
+    .car-card-rent::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 32px;
+      background: rgba(255, 255, 255, 0);
+      backdrop-filter: blur(0px);
+      -webkit-backdrop-filter: blur(0px);
+      transition: backdrop-filter 0.4s ease, background 0.3s;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .car-card-rent:hover::before {
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .car-card-rent .card-img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+      background: #eaeaea;
+      position: relative;
+      z-index: 2;
+      transition: none;
+    }
+
+    .car-card-rent .car-info-rent {
+      padding: 20px 20px 24px;
+      position: relative;
+      z-index: 3;
+      background: transparent;
+    }
+
+    .car-card-rent .car-name-rent {
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--black);
+      margin-bottom: 4px;
+    }
+
+    .car-card-rent .car-price-rent {
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: var(--dark-gray);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+    .car-card-rent .car-price-rent strong {
+      font-weight: 700;
+      color: var(--black);
+      font-size: 1.4rem;
+    }
+
+    .car-card-rent .car-detail {
+      font-size: 0.95rem;
+      color: #555;
+      margin: 8px 0 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      border-top: 1px solid #eee;
+      padding-top: 12px;
+    }
+    .car-card-rent .car-detail i {
+      color: var(--metallic);
+      width: 18px;
+    }
+    .car-card-rent .car-detail span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-rent-card {
+      display: inline-block;
+      background: var(--black);
+      color: white;
+      font-weight: 500;
+      padding: 12px 28px;
+      border-radius: 40px;
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: 0.2s;
+      border: none;
+      cursor: pointer;
+      letter-spacing: 0.2px;
+      margin-top: 6px;
+    }
+    .btn-rent-card:hover {
+      background: #2e2e2e;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+    }
+
+    .car-card-rent .hover-extras {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.5s ease, opacity 0.4s ease, margin 0.3s;
+      margin-top: 0;
+      border-top: 0px solid transparent;
+      padding: 0 4px;
+      position: relative;
+      z-index: 3;
+    }
+
+    .car-card-rent:hover .hover-extras {
+      max-height: 120px;
+      opacity: 1;
+      margin-top: 10px;
+      border-top: 1px solid rgba(0,0,0,0.06);
+      padding-top: 14px;
+    }
+
+    .hover-extras .extra-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      color: #222;
+      padding: 4px 0;
+    }
+    .hover-extras .extra-row i {
+      color: var(--metallic);
+      width: 20px;
+    }
+
+    footer {
+      background: var(--black);
+      color: #ccc;
+      padding: 48px 32px 24px;
+      border-top: 1px solid #2a2a2a;
+      margin-top: 20px;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 40px 20px;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding-bottom: 32px;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    .footer-col h4 {
+      color: white;
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 20px;
+      letter-spacing: 0.2px;
+    }
+    .footer-col p, .footer-col a {
+      color: #b0b0b0;
+      text-decoration: none;
+      display: block;
+      margin-bottom: 12px;
+      font-weight: 300;
+      transition: 0.15s;
+    }
+    .footer-col a:hover {
+      color: white;
+      padding-left: 4px;
+    }
+    .footer-col i {
+      margin-right: 10px;
+      width: 20px;
+      color: #888;
+    }
+    .footer-bottom {
+      max-width: 1280px;
+      margin: 24px auto 0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.9rem;
+      color: #777;
+      padding-top: 16px;
+    }
+    .footer-social a {
+      color: #aaa;
+      margin-left: 18px;
+      font-size: 1.2rem;
+      transition: 0.15s;
+    }
+    .footer-social a:hover {
+      color: white;
+    }
+
+    @media (max-width: 700px) {
+      header { padding: 16px 20px; }
+      .logo { font-size: 1.5rem; }
+      .back-home { font-size: 0.85rem; padding: 6px 16px; }
+      .page-title { font-size: 1.8rem; }
+      .car-grid-rent { gap: 24px; padding: 0 4px; }
+      .car-card-rent:hover { transform: scale(1.02) translateY(-4px); }
+      .search-wrapper { max-width: 100%; }
+      #searchInput { padding: 14px 16px 14px 44px; font-size: 0.95rem; }
+    }
+
+    @media (max-width: 480px) {
+      .car-grid-rent { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <i class="fas fa-car-side"></i> LUXE<span>RENT</span>
+    </div>
+    <a href="index.html" class="back-home"><i class="fas fa-arrow-left"></i> Home</a>
+  </header>
+
+  <main class="rent-now-page">
+    <h1 class="page-title">Choose your drive</h1>
+    <p class="page-sub">Exclusive fleet · prestige performance</p>
+
+    <div class="search-container">
+      <div class="search-wrapper">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" placeholder="Search by name, brand, or specs..." autocomplete="off">
+      </div>
+    </div>
+
+    <div class="car-grid-rent" id="carGridRent"></div>
+    <div class="no-results" id="noResults">
+      <i class="fas fa-car-side"></i>
+      No cars found matching your search.
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h4>About Us</h4>
+        <p>LuxeRent is a premium car rental service with a passion for performance and style.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <p><i class="fas fa-envelope"></i> info@luxerent.com</p>
+        <p><i class="fas fa-phone"></i> +1 (800) 555‑0199</p>
+        <p><i class="fas fa-map-marker-alt"></i> Los Angeles, CA</p>
+      </div>
+      <div class="footer-col">
+        <h4>Follow</h4>
+        <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
+        <a href="#"><i class="fab fa-facebook"></i> Facebook</a>
+        <a href="#"><i class="fab fa-twitter"></i> X (Twitter)</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 LuxeRent. All rights reserved.</span>
+      <div class="footer-social">
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+      // Car data - each car has a unique ID
+      const cars = [
+        { id: 'bmw-m4', name: 'BMW M4', price: 120, img: 'https://imgd.aeplcdn.com/664x374/n/cw/ec/176129/m4-competition-exterior-right-front-three-quarter-3.jpeg?isig=0&q=80', engine: '3.0L I6', hp: '473 hp', transmission: 'Auto', brand: 'BMW' },
+        { id: 'mercedes-c-class', name: 'Mercedes C-Class', price: 110, img: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=600&q=80', engine: '2.0L I4', hp: '255 hp', transmission: '9G-Tronic', brand: 'Mercedes' },
+        { id: 'audi-rs5', name: 'Audi RS5', price: 130, img: 'https://asset.autocarindia.com/static/news/images/20260219_134046_a3b667dc.jpg?w=728&q=75', engine: '2.9L V6', hp: '444 hp', transmission: '8-speed', brand: 'Audi' },
+        { id: 'porsche-911', name: 'Porsche 911', price: 250, img: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&q=80', engine: '3.0L H6', hp: '379 hp', transmission: 'PDK', brand: 'Porsche' },
+        { id: 'lamborghini-urus', name: 'Lamborghini Urus', price: 380, img: 'https://images.unsplash.com/photo-1580274455191-1c62238fa333?w=600&q=80', engine: '4.0L V8', hp: '641 hp', transmission: '8-speed', brand: 'Lamborghini' },
+        { id: 'ferrari-f8', name: 'Ferrari F8', price: 420, img: 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=600&q=80', engine: '3.9L V8', hp: '710 hp', transmission: '7-speed', brand: 'Ferrari' },
+        { id: 'bentley-continental', name: 'Bentley Continental', price: 310, img: 'https://hips.hearstapps.com/hmg-prod/images/2023-bentley-continental-gt-s-coupe-101-1654526518.jpg', engine: '6.0L W12', hp: '626 hp', transmission: '8-speed', brand: 'Bentley' },
+        { id: 'rolls-royce-ghost', name: 'Rolls-Royce Ghost', price: 490, img: 'https://images.unsplash.com/photo-1631295868223-63265b40d9e4?w=600&q=80', engine: '6.7L V12', hp: '563 hp', transmission: '8-speed', brand: 'Rolls-Royce' },
+        { id: 'maserati-mc20', name: 'Maserati MC20', price: 360, img: 'https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?w=600&q=80', engine: '3.0L V6', hp: '621 hp', transmission: '8-speed', brand: 'Maserati' },
+        { id: 'aston-martin-dbx', name: 'Aston Martin DBX', price: 290, img: 'https://www.thecarexpert.co.uk/wp-content/uploads/2021/04/Aston_Martin_DBX__Stirling_Green__AML_1__117-JPG.jpeg.webp', engine: '4.0L V8', hp: '542 hp', transmission: '9-speed', brand: 'Aston Martin' },
+        { id: 'mclaren-720s', name: 'McLaren 720S', price: 460, img: 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=600&q=80', engine: '4.0L V8', hp: '710 hp', transmission: '7-speed', brand: 'McLaren' },
+        { id: 'lexus-lc500', name: 'Lexus LC 500', price: 180, img: 'https://images.unsplash.com/photo-1563720223185-11003d516935?w=600&q=80', engine: '5.0L V8', hp: '471 hp', transmission: '10-speed', brand: 'Lexus' }
+      ];
+
+      const grid = document.getElementById('carGridRent');
+      const searchInput = document.getElementById('searchInput');
+      const noResults = document.getElementById('noResults');
+
+      function renderCars(filter = '') {
+        grid.innerHTML = '';
+        const query = filter.toLowerCase().trim();
+        let visibleCount = 0;
+
+        cars.forEach(car => {
+          const searchable = `${car.name} ${car.brand} ${car.engine} ${car.hp} ${car.transmission}`.toLowerCase();
+          const matches = query === '' || searchable.includes(query);
+
+          if (matches) {
+            visibleCount++;
+            const card = document.createElement('div');
+            card.className = 'car-card-rent';
+
+            card.innerHTML = `
+              <img class="card-img" src="${car.img}" alt="${car.name}" loading="lazy">
+              <div class="car-info-rent">
+                <div class="car-name-rent">${car.name}</div>
+                <div class="car-price-rent"><strong>$${car.price}</strong> / day</div>
+                <div class="cars-detail">
+                  <span><i class="fas fa-engine"></i> ${car.engine}</span>
+                  <span><i class="fas fa-horse-head"></i> ${car.hp}</span>
+                  <span><i class="fas fa-cog"></i> ${car.transmission}</span>
+                </div>
+                <a href="carsdetail.html?id=${car.id}" class="btn-rent-card">Rent now</a>
+                <div class="hover-extras">
+                  <div class="extra-row"><span><i class="fas fa-star"></i> Premium</span> <span>+ insurance</span></div>
+                  <div class="extra-row"><span><i class="fas fa-calendar-check"></i> Free cancellation</span> <span>24/7 support</span></div>
+                </div>
+              </div>
+            `;
+
+            grid.appendChild(card);
+          }
+        });
+
+        if (visibleCount === 0 && query !== '') {
+          noResults.style.display = 'block';
+        } else {
+          noResults.style.display = 'none';
+        }
+      }
+
+      searchInput.addEventListener('input', function() {
+        renderCars(this.value);
+      });
+
+      renderCars();
+
+      searchInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

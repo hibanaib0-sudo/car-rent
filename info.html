@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
+  <title>Complete Your Rental · LuxeRent</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --black: #0b0b0b;
+      --dark-gray: #1f1f1f;
+      --metallic: #a8a8a8;
+      --light-gray: #f5f5f5;
+      --white: #ffffff;
+      --shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.25);
+      --border-radius: 32px;
+      --success: #27ae60;
+      --error: #e74c3c;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--light-gray);
+      color: var(--dark-gray);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 32px;
+      background: var(--white);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(2px);
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--black);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .logo span {
+      color: var(--metallic);
+      font-weight: 300;
+    }
+    .logo i {
+      color: var(--dark-gray);
+      margin-right: 6px;
+    }
+
+    .back-link {
+      text-decoration: none;
+      color: var(--dark-gray);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid #e0e0e0;
+      padding: 8px 20px;
+      border-radius: 40px;
+      transition: 0.2s;
+      font-size: 0.95rem;
+    }
+    .back-link:hover {
+      background: var(--black);
+      color: white;
+      border-color: var(--black);
+    }
+
+    .checkout-container {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+    }
+
+    /* ----- Order Summary ----- */
+    .order-summary {
+      background: var(--white);
+      border-radius: var(--border-radius);
+      padding: 32px;
+      box-shadow: var(--shadow);
+      border: 1px solid #f0f0f0;
+      height: fit-content;
+      position: sticky;
+      top: 100px;
+    }
+
+    .order-summary h2 {
+      font-size: 1.6rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+      color: var(--black);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .order-summary h2 i {
+      color: var(--metallic);
+    }
+
+    .order-car {
+      display: flex;
+      gap: 16px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #eee;
+      margin-bottom: 20px;
+    }
+    .order-car img {
+      width: 100px;
+      height: 70px;
+      object-fit: cover;
+      border-radius: 12px;
+    }
+    .order-car .car-info h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--black);
+    }
+    .order-car .car-info .price {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--black);
+      margin-top: 4px;
+    }
+    .order-car .car-info .price small {
+      font-weight: 400;
+      color: #777;
+      font-size: 0.9rem;
+    }
+
+    .order-details {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .order-details .row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      font-size: 0.95rem;
+      border-bottom: 1px solid #f5f5f5;
+    }
+    .order-details .row.total {
+      border-top: 2px solid var(--black);
+      border-bottom: none;
+      padding-top: 16px;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: var(--black);
+      margin-top: 4px;
+    }
+
+    /* ----- Payment Form ----- */
+    .payment-form {
+      background: var(--white);
+      border-radius: var(--border-radius);
+      padding: 32px;
+      box-shadow: var(--shadow);
+      border: 1px solid #f0f0f0;
+    }
+
+    .payment-form h2 {
+      font-size: 1.6rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+      color: var(--black);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .payment-form h2 i {
+      color: var(--metallic);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: var(--dark-gray);
+      font-size: 0.9rem;
+    }
+    .form-group label .required {
+      color: var(--error);
+      margin-left: 2px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      border: 2px solid #eaeaea;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      background: var(--white);
+      color: var(--dark-gray);
+      outline: none;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--metallic);
+      box-shadow: 0 0 0 4px rgba(168, 168, 168, 0.1);
+    }
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-group .card-icons {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+      color: #999;
+      font-size: 1.8rem;
+    }
+    .form-group .card-icons i {
+      transition: 0.2s;
+    }
+    .form-group .card-icons i:hover {
+      color: var(--black);
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: var(--black);
+      color: white;
+      font-weight: 600;
+      font-size: 1.2rem;
+      padding: 16px;
+      border-radius: 60px;
+      border: none;
+      cursor: pointer;
+      transition: 0.2s;
+      letter-spacing: 0.3px;
+      box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.3);
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .btn-submit:hover {
+      background: #2a2a2a;
+      transform: scale(1.02);
+      box-shadow: 0 18px 32px -10px rgba(0, 0, 0, 0.4);
+    }
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-submit i {
+      font-size: 1rem;
+    }
+
+    /* ----- Success/Error States ----- */
+    .message-box {
+      display: none;
+      padding: 20px 24px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+    .message-box.success {
+      display: block;
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .message-box.error {
+      display: block;
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    /* ----- Loading Spinner ----- */
+    .spinner {
+      display: none;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ----- Responsive ----- */
+    @media (max-width: 900px) {
+      .checkout-container {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+      .order-summary {
+        position: static;
+      }
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 500px) {
+      header {
+        padding: 16px 20px;
+      }
+      .logo {
+        font-size: 1.4rem;
+      }
+      .back-link {
+        font-size: 0.85rem;
+        padding: 6px 14px;
+      }
+      .checkout-container {
+        padding: 0 16px;
+        margin: 20px auto;
+      }
+      .payment-form,
+      .order-summary {
+        padding: 20px;
+      }
+      .order-car img {
+        width: 70px;
+        height: 50px;
+      }
+      .btn-submit {
+        font-size: 1rem;
+        padding: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo">
+      <i class="fas fa-car-side"></i> LUXE<span>RENT</span>
+    </div>
+    <a href="rentnow.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to catalog</a>
+  </header>
+
+  <!-- CHECKOUT CONTAINER -->
+  <main class="checkout-container" id="checkoutContainer">
+
+    <!-- LEFT: Order Summary -->
+    <section class="order-summary" id="orderSummary">
+      <h2><i class="fas fa-receipt"></i> Order Summary</h2>
+      <div id="orderContent">
+        <!-- Dynamically filled by JS -->
+        <div style="text-align:center; padding:20px; color:#888;">
+          <i class="fas fa-spinner fa-pulse"></i> Loading order details...
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT: Payment Form -->
+    <section class="payment-form" id="paymentForm">
+      <h2><i class="fas fa-credit-card"></i> Payment Information</h2>
+
+      <!-- Message Box -->
+      <div class="message-box" id="messageBox"></div>
+
+      <form id="checkoutForm" novalidate>
+        <!-- Personal Information -->
+        <div class="form-group">
+          <label>Full Name <span class="required">*</span></label>
+          <input type="text" id="fullName" placeholder="John Doe" required />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Email Address <span class="required">*</span></label>
+            <input type="email" id="email" placeholder="john@example.com" required />
+          </div>
+          <div class="form-group">
+            <label>Phone Number <span class="required">*</span></label>
+            <input type="tel" id="phone" placeholder="+1 (555) 000-0000" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Pickup Location <span class="required">*</span></label>
+          <select id="pickupLocation" required>
+            <option value="">Select a location...</option>
+            <option value="downtown">Downtown Los Angeles</option>
+            <option value="airport">LAX Airport</option>
+            <option value="beverly">Beverly Hills</option>
+            <option value="santa">Santa Monica</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Pickup Date <span class="required">*</span></label>
+            <input type="date" id="pickupDate" required />
+          </div>
+          <div class="form-group">
+            <label>Return Date <span class="required">*</span></label>
+            <input type="date" id="returnDate" required />
+          </div>
+        </div>
+
+        <hr style="border: none; border-top: 2px solid #f0f0f0; margin: 24px 0;" />
+
+        <!-- Payment Details -->
+        <div class="form-group">
+          <label>Card Number <span class="required">*</span></label>
+          <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" required />
+          <div class="card-icons">
+            <i class="fab fa-cc-visa"></i>
+            <i class="fab fa-cc-mastercard"></i>
+            <i class="fab fa-cc-amex"></i>
+            <i class="fab fa-cc-paypal"></i>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Expiry Date <span class="required">*</span></label>
+            <input type="text" id="expiryDate" placeholder="MM/YY" maxlength="5" required />
+          </div>
+          <div class="form-group">
+            <label>CVV <span class="required">*</span></label>
+            <input type="text" id="cvv" placeholder="123" maxlength="4" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Additional Notes</label>
+          <textarea id="notes" placeholder="Special requests, driving preferences, etc."></textarea>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 12px; margin: 16px 0;">
+          <input type="checkbox" id="terms" required style="width: 18px; height: 18px; cursor: pointer;" />
+          <label for="terms" style="font-size: 0.9rem; cursor: pointer;">
+            I agree to the <a href="#" style="color: var(--black); font-weight: 600;">Terms & Conditions</a> and confirm all information is correct. <span class="required">*</span>
+          </label>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">
+          <span id="btnText">Confirm &amp; Book</span>
+          <i class="fas fa-lock" id="btnIcon"></i>
+          <span class="spinner" id="btnSpinner"></span>
+        </button>
+      </form>
+    </section>
+
+  </main>
+
+  <script>
+    (function() {
+      'use strict';
+
+      // -------------------------------------------------------------
+      // 1. CAR DATA (same as car-detail.html)
+      // -------------------------------------------------------------
+      const carData = [{
+        id: 'bmw-m4',
+        name: 'BMW M4',
+        price: 120,
+        transmission: 'Automatic',
+        type: 'Coupe',
+        fuel: 'Petrol',
+        image: 'https://images.unsplash.com/photo-1553440563-9f1c3f8d6f2b?w=600&q=80',
+        description: 'The BMW M4 delivers razor-sharp handling, a twin-turbo inline-6 engine, and a driver-focused cockpit.'
+      }, {
+        id: 'mercedes-c-class',
+        name: 'Mercedes C-Class',
+        price: 110,
+        transmission: 'Automatic',
+        type: 'Sedan',
+        fuel: 'Petrol',
+        image: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=600&q=80',
+        description: 'Refined and elegant, the Mercedes C-Class combines luxury with advanced technology.'
+      }, {
+        id: 'audi-rs5',
+        name: 'Audi RS5',
+        price: 130,
+        transmission: 'Automatic',
+        type: 'Coupe',
+        fuel: 'Petrol',
+        image: 'https://images.unsplash.com/photo-1603584173876-7b6e8a1f29c5?w=600&q=80',
+        description: 'The Audi RS5 is a performance masterpiece with a 444 hp V6, Quattro all-wheel drive.'
+      }, {
+        id: 'porsche-911',
+        name: 'Porsche 911',
+        price: 250,
+        transmission: 'Automatic',
+        type: 'Sports Car',
+        fuel: 'Petrol',
+        image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&q=80',
+        description: 'An icon reimagined. The Porsche 911 offers timeless design and exhilarating dynamics.'
+      }, {
+        id: 'lamborghini-urus',
+        name: 'Lamborghini Urus',
+        price: 380,
+        transmission: 'Automatic',
+        type: 'SUV',
+        fuel: 'Petrol',
+        image: 'https://images.unsplash.com/photo-1580274455191-1c62238fa333?w=600&q=80',
+        description: 'The world\'s first Super SUV. The Lamborghini Urus combines extreme performance with luxury.'
+      }, {
+        id: 'ferrari-f8',
+        name: 'Ferrari F8',
+        price: 420,
+        transmission: 'Automatic',
+        type: 'Sports Car',
+        fuel: 'Petrol',
+        image: 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=600&q=80',
+        description: 'The Ferrari F8 Tributo is a mid-engine V8 marvel with 710 hp and race-bred aerodynamics.'
+      }, {
+        id: 'bentley-continental',
+        name: 'Bentley Continental',
+        price: 310,
+        transmission: 'Automatic',
+        type: 'Coupe',
+        fuel: 'Petrol',
+        image: 'https://images.unsplash.com/photo-1609504376356-111de4cf1f9d?w=600&q=80',
+        description: 'The Bentley Continental GT is the epitome of grand touring with a W12 engine.'
+      }, {
+        id: 'rolls-royce-ghost',
+        name: 'Rolls-Royce Ghost',
+        price: 490,
+        transmission: 'Automatic',
+        type: 'Sedan',
+        fuel: 'Petrol',
+        image: 'https://images.unsplash.com/photo-1631295868223-63265b40d9e4?w=600&q=80',
+        description: 'The Rolls-Royce Ghost is a masterpiece of luxury and engineering refinement.'
+      }, {
+        id: 'maserati-mc20',
+        name: 'Maserati MC20',
+        price: 360,
+        transmission: 'Automatic',
+        type: 'Sports Car',
+        fuel: 'Petrol',
+        image: 'https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?w=600&q=80',
+        description: 'The Maserati MC20 is a pure-bred super sports car with an innovative V6 engine.'
+      }, {
+        id: 'aston-martin-dbx',
+        name: 'Aston Martin DBX',
+        price: 290,
+        transmission: 'Automatic',
+        type: 'SUV',
+        fuel: 'Petrol',
+        image: 'https://images.unsplash.com/photo-1603386329225-868f9b1b6e6a?w=600&q=80',
+        description: 'The Aston Martin DBX combines sports car dynamics with luxury and practicality.'
+      }, {
+        id: 'mclaren-720s',
+        name: 'McLaren 720S',
+        price: 460,
+        transmission: 'Automatic',
+        type: 'Sports Car',
+        fuel: 'Petrol',
+        image: 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=600&q=80',
+        description: 'The McLaren 720S is a technological tour de force with 710 hp and advanced aerodynamics.'
+      }, {
+        id: 'lexus-lc500',
+        name: 'Lexus LC 500',
+        price: 180,
+        transmission: 'Automatic',
+        type: 'Coupe',
+        fuel: 'Petrol',
+        image: 'https://images.unsplash.com/photo-1563720223185-11003d516935?w=600&q=80',
+        description: 'The Lexus LC 500 combines a naturally aspirated V8 with Japanese craftsmanship.'
+      }];
+
+      // -------------------------------------------------------------
+      // 2. UTILITY: get URL parameter
+      // -------------------------------------------------------------
+      function getParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+      }
+
+      function findCarById(id) {
+        return carData.find(car => car.id === id);
+      }
+
+      // -------------------------------------------------------------
+      // 3. Load car data and populate order summary
+      // -------------------------------------------------------------
+      const orderContent = document.getElementById('orderContent');
+      const messageBox = document.getElementById('messageBox');
+
+      function loadOrder() {
+        const carId = getParam('carId');
+        if (!carId) {
+          orderContent.innerHTML = `
+            <div style="text-align:center; padding:20px; color:#888;">
+              <i class="fas fa-exclamation-circle" style="font-size:2rem; display:block; margin-bottom:12px;"></i>
+              No car selected. Please go back and choose a car.
+            </div>
+          `;
+          return;
+        }
+
+        const car = findCarById(carId);
+        if (!car) {
+          orderContent.innerHTML = `
+            <div style="text-align:center; padding:20px; color:#888;">
+              <i class="fas fa-exclamation-circle" style="font-size:2rem; display:block; margin-bottom:12px;"></i>
+              Car not found.
+            </div>
+          `;
+          return;
+        }
+
+        // Calculate tax and total (example: 15% tax)
+        const taxRate = 0.15;
+        const dailyRate = car.price;
+        const tax = dailyRate * taxRate;
+        const total = dailyRate + tax;
+
+        orderContent.innerHTML = `
+          <div class="order-car">
+            <img src="${car.image}" alt="${car.name}" />
+            <div class="car-info">
+              <h3>${car.name}</h3>
+              <div class="price">$${car.price} <small>/ day</small></div>
+            </div>
+          </div>
+          <div class="order-details">
+            <div class="row"><span>Daily Rate</span><span>$${car.price.toFixed(2)}</span></div>
+            <div class="row"><span>Tax (15%)</span><span>$${tax.toFixed(2)}</span></div>
+            <div class="row"><span>Insurance</span><span>Included</span></div>
+            <div class="row total"><span>Total</span><span>$${total.toFixed(2)}</span></div>
+          </div>
+        `;
+
+        // Store total in a data attribute for later use
+        document.getElementById('checkoutForm').dataset.total = total.toFixed(2);
+      }
+
+      // -------------------------------------------------------------
+      // 4. Handle form submission
+      // -------------------------------------------------------------
+      const form = document.getElementById('checkoutForm');
+      const submitBtn = document.getElementById('submitBtn');
+      const btnText = document.getElementById('btnText');
+      const btnIcon = document.getElementById('btnIcon');
+      const btnSpinner = document.getElementById('btnSpinner');
+
+      function showMessage(message, type) {
+        messageBox.textContent = message;
+        messageBox.className = 'message-box';
+        if (type === 'success') {
+          messageBox.classList.add('success');
+        } else if (type === 'error') {
+          messageBox.classList.add('error');
+        }
+        // Auto hide after 5 seconds
+        setTimeout(() => {
+          messageBox.className = 'message-box';
+        }, 5000);
+      }
+
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // Validate form
+        const fullName = document.getElementById('fullName').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const pickupLocation = document.getElementById('pickupLocation').value;
+        const pickupDate = document.getElementById('pickupDate').value;
+        const returnDate = document.getElementById('returnDate').value;
+        const cardNumber = document.getElementById('cardNumber').value.trim();
+        const expiryDate = document.getElementById('expiryDate').value.trim();
+        const cvv = document.getElementById('cvv').value.trim();
+        const terms = document.getElementById('terms').checked;
+
+        if (!fullName || !email || !phone || !pickupLocation || !pickupDate || !returnDate ||
+            !cardNumber || !expiryDate || !cvv || !terms) {
+          showMessage('Please fill in all required fields and accept the terms.', 'error');
+          return;
+        }
+
+        // Basic email validation
+        if (!email.includes('@') || !email.includes('.')) {
+          showMessage('Please enter a valid email address.', 'error');
+          return;
+        }
+
+        // Basic card validation (simple length check)
+        const cardClean = cardNumber.replace(/\s/g, '');
+        if (cardClean.length < 13 || cardClean.length > 19) {
+          showMessage('Please enter a valid card number (13-19 digits).', 'error');
+          return;
+        }
+
+        // Date validation
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const pickup = new Date(pickupDate);
+        const returnD = new Date(returnDate);
+
+        if (pickup < today) {
+          showMessage('Pickup date cannot be in the past.', 'error');
+          return;
+        }
+        if (returnD <= pickup) {
+          showMessage('Return date must be after pickup date.', 'error');
+          return;
+        }
+
+        // Simulate payment processing
+        submitBtn.disabled = true;
+        btnText.textContent = 'Processing...';
+        btnIcon.style.display = 'none';
+        btnSpinner.style.display = 'inline-block';
+
+        setTimeout(() => {
+          // Success!
+          showMessage('✅ Booking confirmed! Your rental has been reserved. A confirmation email has been sent.', 'success');
+          btnText.textContent = '✓ Booked!';
+          btnSpinner.style.display = 'none';
+          submitBtn.disabled = false;
+
+          // Log the booking details
+          const carId = getParam('carId');
+          const car = findCarById(carId);
+          console.log('===== BOOKING CONFIRMED =====');
+          console.log('Car:', car ? car.name : 'Unknown');
+          console.log('Customer:', fullName, email, phone);
+          console.log('Pickup:', pickupLocation, pickupDate);
+          console.log('Return:', returnDate);
+          console.log('Total:', form.dataset.total);
+          console.log('==============================');
+
+          // Reset button after 3 seconds
+          setTimeout(() => {
+            btnText.textContent = 'Confirm & Book';
+            btnIcon.style.display = 'inline-block';
+            btnSpinner.style.display = 'none';
+          }, 3000);
+
+        }, 2000);
+      });
+
+      // -------------------------------------------------------------
+      // 5. Card number formatting (auto-add spaces)
+      // -------------------------------------------------------------
+      document.getElementById('cardNumber').addEventListener('input', function(e) {
+        let value = this.value.replace(/\D/g, '');
+        if (value.length > 16) value = value.slice(0, 16);
+        let formatted = '';
+        for (let i = 0; i < value.length; i++) {
+          if (i > 0 && i % 4 === 0) formatted += ' ';
+          formatted += value[i];
+        }
+        this.value = formatted;
+      });
+
+      // Expiry date formatting (MM/YY)
+      document.getElementById('expiryDate').addEventListener('input', function(e) {
+        let value = this.value.replace(/\D/g, '');
+        if (value.length > 4) value = value.slice(0, 4);
+        if (value.length >= 2) {
+          const month = parseInt(value.slice(0, 2));
+          if (month > 12) {
+            this.value = '12' + value.slice(2);
+            return;
+          }
+        }
+        if (value.length > 2) {
+          this.value = value.slice(0, 2) + '/' + value.slice(2);
+        } else {
+          this.value = value;
+        }
+      });
+
+      // CVV max length
+      document.getElementById('cvv').addEventListener('input', function(e) {
+        this.value = this.value.replace(/\D/g, '').slice(0, 4);
+      });
+
+      // -------------------------------------------------------------
+      // 6. Set default dates (today + 3 days, + 5 days)
+      // -------------------------------------------------------------
+      function setDefaultDates() {
+        const today = new Date();
+        const pickup = new Date(today);
+        pickup.setDate(today.getDate() + 3);
+        const returnD = new Date(today);
+        returnD.setDate(today.getDate() + 6);
+
+        const formatDate = (date) => {
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          return `${year}-${month}-${day}`;
+        };
+
+        document.getElementById('pickupDate').value = formatDate(pickup);
+        document.getElementById('returnDate').value = formatDate(returnD);
+      }
+
+      // -------------------------------------------------------------
+      // 7. INIT
+      // -------------------------------------------------------------
+      loadOrder();
+      setDefaultDates();
+
+      // Also load order if car ID changes (for demo)
+      window.addEventListener('load', function() {
+        // any extra init
+      });
+
+    })();
+  </script>
+
+</body>
+</html>
