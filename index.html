@@ -94,6 +94,71 @@
       color: var(--metallic);
     }
 
+    /* ===== ADMIN BUTTON ===== */
+    .admin-btn-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+
+    .admin-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      color: var(--dark-gray);
+      transition: all 0.3s ease;
+      padding: 4px 8px;
+      border-radius: 50%;
+      width: 56px;
+      height: 56px;
+      background: var(--white);
+      border: 2px solid #eaeaea;
+      cursor: pointer;
+    }
+    .admin-btn:hover {
+      border-color: var(--black);
+      background: var(--light-gray);
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .admin-btn i {
+      font-size: 1.2rem;
+      color: var(--black);
+      margin-bottom: 2px;
+    }
+    .admin-btn span {
+      font-size: 0.55rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: #888;
+    }
+    .admin-btn:hover span {
+      color: var(--black);
+    }
+
+    /* Admin tooltip */
+    .admin-tooltip {
+      position: absolute;
+      bottom: -32px;
+      left: 50%;
+      transform: translateX(-50%) scale(0.8);
+      background: var(--black);
+      color: white;
+      font-size: 0.65rem;
+      padding: 4px 10px;
+      border-radius: 6px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.2s ease;
+    }
+    .admin-btn-wrapper:hover .admin-tooltip {
+      opacity: 1;
+      transform: translateX(-50%) scale(1);
+    }
+
     .menu-btn {
       background: none;
       border: none;
@@ -726,6 +791,17 @@
       .about-page h2, .contact-page h2 { font-size: 2.2rem; }
       .about-page .about-content { padding: 24px; }
       .about-page .about-stats { grid-template-columns: 1fr 1fr; }
+      
+      .admin-btn {
+        width: 44px;
+        height: 44px;
+      }
+      .admin-btn i {
+        font-size: 1rem;
+      }
+      .admin-btn span {
+        font-size: 0.5rem;
+      }
     }
 
     @media (max-width: 480px) {
@@ -734,6 +810,18 @@
       .about-page .about-stats { grid-template-columns: 1fr; }
       .best-seller-content h2 { font-size: 1.6rem; }
       .best-seller-price { font-size: 1.6rem; }
+      
+      .admin-btn {
+        width: 38px;
+        height: 38px;
+        border-width: 1.5px;
+      }
+      .admin-btn i {
+        font-size: 0.85rem;
+      }
+      .admin-btn span {
+        font-size: 0.45rem;
+      }
     }
 
     @media (min-width: 769px) {
@@ -755,6 +843,7 @@
     <nav>
       <a href="#" id="aboutLinkMobile"><i class="fas fa-info-circle"></i> About Us</a>
       <a href="#" id="contactLinkMobile"><i class="fas fa-envelope"></i> Contact Us</a>
+      <a href="login.html" id="adminLinkMobile"><i class="fas fa-user-shield"></i> Admin Login</a>
     </nav>
     <div style="margin-top: auto; color: #999; font-size: 0.9rem; border-top: 1px solid #eee; padding-top: 24px;">
       <i class="fas fa-car" style="color: var(--metallic);"></i> Luxury Rent
@@ -770,6 +859,16 @@
     <div class="header-nav">
       <a href="#" id="aboutLinkDesktop"><i class="fas fa-info-circle"></i> About</a>
       <a href="#" id="contactLinkDesktop"><i class="fas fa-envelope"></i> Contact</a>
+      
+      <!-- ===== ADMIN BUTTON ===== -->
+      <a href="login.html" class="admin-btn-wrapper" title="Admin Login">
+        <div class="admin-btn">
+          <i class="fas fa-user-shield"></i>
+          <span>Admin</span>
+        </div>
+        <span class="admin-tooltip">Go to Admin</span>
+      </a>
+      
       <a href="index.html" style="background: var(--black); color: white; padding: 8px 20px; border-radius: 40px; font-weight: 600;">
         <i class="fas fa-car"></i> Back to Home
       </a>
@@ -800,7 +899,8 @@
     <section class="listings" id="carListings">
       <div class="container">
         <h2 class="section-title">Featured fleet</h2>
-        <div class="car-grid">
+        <div class="car-grid" id="publicCarsGrid">
+          <!-- Cars will be loaded here from Firebase -->
           <div class="car-card">
             <img src="https://images.unsplash.com/photo-1553440563-9f1c3f8d6f2b?w=600&q=80" alt="BMW M4">
             <div class="car-info">
@@ -1044,6 +1144,58 @@
       });
 
     })();
+  </script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  
+    // Use the exact same configuration object
+    const firebaseConfig = {
+      apiKey: "AIzaSyC7g7VKQs0r9hxW1lnUJxMPdI7JEhxPqAg",
+      authDomain: "car-rental-site-28fd2.firebaseapp.com",
+      projectId: "car-rental-site-28fd2",
+      storageBucket: "car-rental-site-28fd2.firebasestorage.app",
+      messagingSenderId: "43976613134",
+      appId: "1:43976613134:web:3c4bbccea761ee278dcb5f"
+    };
+  
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+  
+    // Function to pull fleet data for display
+    async function displayUserFleet() {
+      const carGrid = document.getElementById('publicCarsGrid');
+      
+      try {
+        const q = query(collection(db, 'cars'), orderBy('createdAt', 'desc'));
+        const snapshot = await getDocs(q);
+        
+        if (snapshot.empty) {
+          // Keep the static cars as fallback
+          return;
+        }
+        
+        let html = '';
+        snapshot.forEach(docSnap => {
+          const car = docSnap.data();
+          html += `
+            <div class="car-card">
+              <img src="${car.image || 'https://via.placeholder.com/300x200/eee/999?text=No+Image'}" alt="${car.name}" loading="lazy" />
+              <div class="car-info">
+                <div class="car-name">${car.name}</div>
+                <div class="car-price"><strong>${car.price} MAD</strong> / day</div>
+                <a href="carsdetail.html?id=${docSnap.id}" class="btn-card">Rent</a>
+              </div>
+            </div>
+          `;
+        });
+        carGrid.innerHTML = html;
+      } catch (error) {
+        console.error("Error loading cars for users:", error);
+      }
+    }
+  
+    displayUserFleet();
   </script>
 </body>
 </html>

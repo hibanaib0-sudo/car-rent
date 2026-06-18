@@ -248,7 +248,7 @@
       gap: 16px;
     }
 
-    /* ----- CARD DETECTION (new) ----- */
+    /* ----- CARD DETECTION ----- */
     .card-input-wrapper {
       position: relative;
     }
@@ -315,45 +315,9 @@
     .card-icons-detected .card-icon.discover-icon { color: var(--discover-color); }
     .card-icons-detected .card-icon.paypal-icon { color: var(--paypal-color); }
 
-    .card-icons-detected .card-icon.active.visa-icon { 
-      color: var(--visa-color); 
-      text-shadow: 0 0 20px rgba(26, 31, 113, 0.3);
-    }
-    .card-icons-detected .card-icon.active.mastercard-icon { 
-      color: var(--mastercard-color); 
-      text-shadow: 0 0 20px rgba(235, 0, 27, 0.3);
-    }
-    .card-icons-detected .card-icon.active.amex-icon { 
-      color: var(--amex-color); 
-      text-shadow: 0 0 20px rgba(0, 111, 207, 0.3);
-    }
-    .card-icons-detected .card-icon.active.discover-icon { 
-      color: var(--discover-color); 
-      text-shadow: 0 0 20px rgba(255, 96, 0, 0.3);
-    }
-    .card-icons-detected .card-icon.active.paypal-icon { 
-      color: var(--paypal-color); 
-      text-shadow: 0 0 20px rgba(0, 48, 135, 0.3);
-    }
-
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(-50%) scale(0.8); }
       to { opacity: 1; transform: translateY(-50%) scale(1); }
-    }
-
-    /* ----- Card input with detection ----- */
-    .form-group .card-icons {
-      display: flex;
-      gap: 12px;
-      margin-top: 8px;
-      color: #999;
-      font-size: 1.8rem;
-    }
-    .form-group .card-icons i {
-      transition: 0.2s;
-    }
-    .form-group .card-icons i:hover {
-      color: var(--black);
     }
 
     .btn-submit {
@@ -592,441 +556,505 @@
 
   </main>
 
-  <script>
-    (function() {
-      'use strict';
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-      // -------------------------------------------------------------
-      // 1. CAR DATA
-      // -------------------------------------------------------------
-      const carData = [{
-        id: 'bmw-m4',
-        name: 'BMW M4',
-        price: 120,
-        transmission: 'Automatic',
-        type: 'Coupe',
-        fuel: 'Petrol',
-        image: 'https://images.unsplash.com/photo-1553440563-9f1c3f8d6f2b?w=600&q=80',
-        description: 'The BMW M4 delivers razor-sharp handling, a twin-turbo inline-6 engine, and a driver-focused cockpit.'
-      }, {
-        id: 'mercedes-c-class',
-        name: 'Mercedes C-Class',
-        price: 110,
-        transmission: 'Automatic',
-        type: 'Sedan',
-        fuel: 'Petrol',
-        image: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=600&q=80',
-        description: 'Refined and elegant, the Mercedes C-Class combines luxury with advanced technology.'
-      }, {
-        id: 'audi-rs5',
-        name: 'Audi RS5',
-        price: 130,
-        transmission: 'Automatic',
-        type: 'Coupe',
-        fuel: 'Petrol',
-        image: 'https://images.unsplash.com/photo-1603584173876-7b6e8a1f29c5?w=600&q=80',
-        description: 'The Audi RS5 is a performance masterpiece with a 444 hp V6, Quattro all-wheel drive.'
-      }, {
-        id: 'porsche-911',
-        name: 'Porsche 911',
-        price: 250,
-        transmission: 'Automatic',
-        type: 'Sports Car',
-        fuel: 'Petrol',
-        image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&q=80',
-        description: 'An icon reimagined. The Porsche 911 offers timeless design and exhilarating dynamics.'
-      }, {
-        id: 'lamborghini-urus',
-        name: 'Lamborghini Urus',
-        price: 380,
-        transmission: 'Automatic',
-        type: 'SUV',
-        fuel: 'Petrol',
-        image: 'https://images.unsplash.com/photo-1580274455191-1c62238fa333?w=600&q=80',
-        description: 'The world\'s first Super SUV. The Lamborghini Urus combines extreme performance with luxury.'
-      }, {
-        id: 'ferrari-f8',
-        name: 'Ferrari F8',
-        price: 420,
-        transmission: 'Automatic',
-        type: 'Sports Car',
-        fuel: 'Petrol',
-        image: 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=600&q=80',
-        description: 'The Ferrari F8 Tributo is a mid-engine V8 marvel with 710 hp and race-bred aerodynamics.'
-      }, {
-        id: 'bentley-continental',
-        name: 'Bentley Continental',
-        price: 310,
-        transmission: 'Automatic',
-        type: 'Coupe',
-        fuel: 'Petrol',
-        image: 'https://images.unsplash.com/photo-1609504376356-111de4cf1f9d?w=600&q=80',
-        description: 'The Bentley Continental GT is the epitome of grand touring with a W12 engine.'
-      }, {
-        id: 'rolls-royce-ghost',
-        name: 'Rolls-Royce Ghost',
-        price: 490,
-        transmission: 'Automatic',
-        type: 'Sedan',
-        fuel: 'Petrol',
-        image: 'https://images.unsplash.com/photo-1631295868223-63265b40d9e4?w=600&q=80',
-        description: 'The Rolls-Royce Ghost is a masterpiece of luxury and engineering refinement.'
-      }, {
-        id: 'maserati-mc20',
-        name: 'Maserati MC20',
-        price: 360,
-        transmission: 'Automatic',
-        type: 'Sports Car',
-        fuel: 'Petrol',
-        image: 'https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?w=600&q=80',
-        description: 'The Maserati MC20 is a pure-bred super sports car with an innovative V6 engine.'
-      }, {
-        id: 'aston-martin-dbx',
-        name: 'Aston Martin DBX',
-        price: 290,
-        transmission: 'Automatic',
-        type: 'SUV',
-        fuel: 'Petrol',
-        image: 'https://images.unsplash.com/photo-1603386329225-868f9b1b6e6a?w=600&q=80',
-        description: 'The Aston Martin DBX combines sports car dynamics with luxury and practicality.'
-      }, {
-        id: 'mclaren-720s',
-        name: 'McLaren 720S',
-        price: 460,
-        transmission: 'Automatic',
-        type: 'Sports Car',
-        fuel: 'Petrol',
-        image: 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=600&q=80',
-        description: 'The McLaren 720S is a technological tour de force with 710 hp and advanced aerodynamics.'
-      }, {
-        id: 'lexus-lc500',
-        name: 'Lexus LC 500',
-        price: 180,
-        transmission: 'Automatic',
-        type: 'Coupe',
-        fuel: 'Petrol',
-        image: 'https://images.unsplash.com/photo-1563720223185-11003d516935?w=600&q=80',
-        description: 'The Lexus LC 500 combines a naturally aspirated V8 with Japanese craftsmanship.'
-      }];
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyC7g7VKQs0r9hxwIlnUJxMPdI7JEhxPqAg",
+      authDomain: "car-rental-site-28fd2.firebaseapp.com",
+      projectId: "car-rental-site-28fd2",
+      storageBucket: "car-rental-site-28fd2.firebasestorage.app",
+      messagingSenderId: "43976613134",
+      appId: "1:43976613134:web:3c4bbccea761ee278dcb5f"
+    };
 
-      // -------------------------------------------------------------
-      // 2. UTILITY FUNCTIONS
-      // -------------------------------------------------------------
-      function getParam(param) {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get(param);
-      }
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-      function findCarById(id) {
-        return carData.find(car => car.id === id);
-      }
+    // -------------------------------------------------------------
+    // 1. CAR DATA
+    // -------------------------------------------------------------
+    const carData = [{
+      id: 'bmw-m4',
+      name: 'BMW M4',
+      price: 120,
+      transmission: 'Automatic',
+      type: 'Coupe',
+      fuel: 'Petrol',
+      image: 'https://imgd.aeplcdn.com/664x374/n/cw/ec/176129/m4-competition-exterior-right-front-three-quarter-3.jpeg?isig=0&q=80',
+      description: 'The BMW M4 delivers razor-sharp handling, a twin-turbo inline-6 engine, and a driver-focused cockpit.'
+    }, {
+      id: 'mercedes-c-class',
+      name: 'Mercedes C-Class',
+      price: 110,
+      transmission: 'Automatic',
+      type: 'Sedan',
+      fuel: 'Petrol',
+      image: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=600&q=80',
+      description: 'Refined and elegant, the Mercedes C-Class combines luxury with advanced technology.'
+    }, {
+      id: 'audi-rs5',
+      name: 'Audi RS5',
+      price: 130,
+      transmission: 'Automatic',
+      type: 'Coupe',
+      fuel: 'Petrol',
+      image: 'https://asset.autocarindia.com/static/news/images/20260219_134046_a3b667dc.jpg?w=728&q=75',
+      description: 'The Audi RS5 is a performance masterpiece with a 444 hp V6, Quattro all-wheel drive.'
+    }, {
+      id: 'porsche-911',
+      name: 'Porsche 911',
+      price: 250,
+      transmission: 'Automatic',
+      type: 'Sports Car',
+      fuel: 'Petrol',
+      image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&q=80',
+      description: 'An icon reimagined. The Porsche 911 offers timeless design and exhilarating dynamics.'
+    }, {
+      id: 'lamborghini-urus',
+      name: 'Lamborghini Urus',
+      price: 380,
+      transmission: 'Automatic',
+      type: 'SUV',
+      fuel: 'Petrol',
+      image: 'https://images.unsplash.com/photo-1580274455191-1c62238fa333?w=600&q=80',
+      description: 'The world\'s first Super SUV. The Lamborghini Urus combines extreme performance with luxury.'
+    }, {
+      id: 'ferrari-f8',
+      name: 'Ferrari F8',
+      price: 420,
+      transmission: 'Automatic',
+      type: 'Sports Car',
+      fuel: 'Petrol',
+      image: 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=600&q=80',
+      description: 'The Ferrari F8 Tributo is a mid-engine V8 marvel with 710 hp and race-bred aerodynamics.'
+    }, {
+      id: 'bentley-continental',
+      name: 'Bentley Continental',
+      price: 310,
+      transmission: 'Automatic',
+      type: 'Coupe',
+      fuel: 'Petrol',
+      image: 'https://hips.hearstapps.com/hmg-prod/images/2023-bentley-continental-gt-s-coupe-101-1654526518.jpg',
+      description: 'The Bentley Continental GT is the epitome of grand touring with a W12 engine.'
+    }, {
+      id: 'rolls-royce-ghost',
+      name: 'Rolls-Royce Ghost',
+      price: 490,
+      transmission: 'Automatic',
+      type: 'Sedan',
+      fuel: 'Petrol',
+      image: 'https://images.unsplash.com/photo-1631295868223-63265b40d9e4?w=600&q=80',
+      description: 'The Rolls-Royce Ghost is a masterpiece of luxury and engineering refinement.'
+    }, {
+      id: 'maserati-mc20',
+      name: 'Maserati MC20',
+      price: 360,
+      transmission: 'Automatic',
+      type: 'Sports Car',
+      fuel: 'Petrol',
+      image: 'https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?w=600&q=80',
+      description: 'The Maserati MC20 is a pure-bred super sports car with an innovative V6 engine.'
+    }, {
+      id: 'aston-martin-dbx',
+      name: 'Aston Martin DBX',
+      price: 290,
+      transmission: 'Automatic',
+      type: 'SUV',
+      fuel: 'Petrol',
+      image: 'https://www.thecarexpert.co.uk/wp-content/uploads/2021/04/Aston_Martin_DBX__Stirling_Green__AML_1__117-JPG.jpeg.webp',
+      description: 'The Aston Martin DBX combines sports car dynamics with luxury and practicality.'
+    }, {
+      id: 'mclaren-720s',
+      name: 'McLaren 720S',
+      price: 460,
+      transmission: 'Automatic',
+      type: 'Sports Car',
+      fuel: 'Petrol',
+      image: 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=600&q=80',
+      description: 'The McLaren 720S is a technological tour de force with 710 hp and advanced aerodynamics.'
+    }, {
+      id: 'lexus-lc500',
+      name: 'Lexus LC 500',
+      price: 180,
+      transmission: 'Automatic',
+      type: 'Coupe',
+      fuel: 'Petrol',
+      image: 'https://images.unsplash.com/photo-1563720223185-11003d516935?w=600&q=80',
+      description: 'The Lexus LC 500 combines a naturally aspirated V8 with Japanese craftsmanship.'
+    }];
 
-      // -------------------------------------------------------------
-      // 3. CARD DETECTION SYSTEM
-      // -------------------------------------------------------------
-      function detectCardType(cardNumber) {
-        const clean = cardNumber.replace(/\s/g, '');
-        if (!clean || clean.length < 2) return null;
+    // -------------------------------------------------------------
+    // 2. UTILITY FUNCTIONS
+    // -------------------------------------------------------------
+    function getParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
 
-        // Visa: starts with 4
-        if (/^4/.test(clean)) return 'visa';
-        // Mastercard: starts with 51-55 or 2221-2720
-        if (/^5[1-5]/.test(clean) || /^2[2-7][2-7][0-9]/.test(clean)) return 'mastercard';
-        // Amex: starts with 34 or 37
-        if (/^3[4|7]/.test(clean)) return 'amex';
-        // Discover: starts with 6011, 65, 644-649, 622126-622925
-        if (/^6011/.test(clean) || /^65/.test(clean) || /^64[4-9]/.test(clean) || /^622[1-9][2-9][0-9]/.test(clean)) return 'discover';
-        // PayPal: starts with 8 or 9 (simplified detection for demo)
-        if (/^[89]/.test(clean)) return 'paypal';
-        
-        return 'default-card';
-      }
+    function findCarById(id) {
+      return carData.find(car => car.id === id);
+    }
 
-      function getCardDisplayName(type) {
-        const names = {
-          'visa': 'Visa',
-          'mastercard': 'Mastercard',
-          'amex': 'American Express',
-          'discover': 'Discover',
-          'paypal': 'PayPal',
-          'default-card': 'Card'
-        };
-        return names[type] || 'Card';
-      }
+    // -------------------------------------------------------------
+    // 3. CARD DETECTION SYSTEM
+    // -------------------------------------------------------------
+    function detectCardType(cardNumber) {
+      const clean = cardNumber.replace(/\s/g, '');
+      if (!clean || clean.length < 2) return null;
 
-      function getCardColor(type) {
-        const colors = {
-          'visa': '#1a1f71',
-          'mastercard': '#eb001b',
-          'amex': '#006fcf',
-          'discover': '#ff6000',
-          'paypal': '#003087',
-          'default-card': '#555'
-        };
-        return colors[type] || '#555';
-      }
+      if (/^4/.test(clean)) return 'visa';
+      if (/^5[1-5]/.test(clean) || /^2[2-7][2-7][0-9]/.test(clean)) return 'mastercard';
+      if (/^3[4|7]/.test(clean)) return 'amex';
+      if (/^6011/.test(clean) || /^65/.test(clean) || /^64[4-9]/.test(clean) || /^622[1-9][2-9][0-9]/.test(clean)) return 'discover';
+      if (/^[89]/.test(clean)) return 'paypal';
+      
+      return 'default-card';
+    }
 
-      // -------------------------------------------------------------
-      // 4. CARD DETECTION UI UPDATE
-      // -------------------------------------------------------------
-      const cardInput = document.getElementById('cardNumber');
-      const cardBadge = document.getElementById('cardBadge');
-      const iconElements = {
-        visa: document.getElementById('visaIcon'),
-        mastercard: document.getElementById('mastercardIcon'),
-        amex: document.getElementById('amexIcon'),
-        discover: document.getElementById('discoverIcon'),
-        paypal: document.getElementById('paypalIcon')
+    function getCardDisplayName(type) {
+      const names = {
+        'visa': 'Visa',
+        'mastercard': 'Mastercard',
+        'amex': 'American Express',
+        'discover': 'Discover',
+        'paypal': 'PayPal',
+        'default-card': 'Card'
       };
+      return names[type] || 'Card';
+    }
 
-      function updateCardDetection() {
-        const value = cardInput.value;
-        const detectedType = detectCardType(value);
+    // -------------------------------------------------------------
+    // 4. CARD DETECTION UI UPDATE
+    // -------------------------------------------------------------
+    const cardInput = document.getElementById('cardNumber');
+    const cardBadge = document.getElementById('cardBadge');
+    const iconElements = {
+      visa: document.getElementById('visaIcon'),
+      mastercard: document.getElementById('mastercardIcon'),
+      amex: document.getElementById('amexIcon'),
+      discover: document.getElementById('discoverIcon'),
+      paypal: document.getElementById('paypalIcon')
+    };
+
+    function updateCardDetection() {
+      const value = cardInput.value;
+      const detectedType = detectCardType(value);
+      
+      Object.values(iconElements).forEach(icon => {
+        icon.classList.remove('active');
+      });
+
+      cardBadge.classList.remove('visible', 'visa', 'mastercard', 'amex', 'discover', 'paypal', 'default-card');
+
+      if (detectedType && value.length >= 2) {
+        cardBadge.textContent = getCardDisplayName(detectedType);
+        cardBadge.classList.add('visible', detectedType);
         
-        // Reset all icons
-        Object.values(iconElements).forEach(icon => {
-          icon.classList.remove('active');
-        });
-
-        // Reset badge
-        cardBadge.classList.remove('visible', 'visa', 'mastercard', 'amex', 'discover', 'paypal', 'default-card');
-
-        if (detectedType && value.length >= 2) {
-          // Show badge with card name
-          cardBadge.textContent = getCardDisplayName(detectedType);
-          cardBadge.classList.add('visible', detectedType);
-          
-          // Highlight the corresponding icon
-          if (iconElements[detectedType]) {
-            iconElements[detectedType].classList.add('active');
-          }
-        } else if (value.length === 0) {
-          // Hide everything if empty
-          cardBadge.classList.remove('visible');
+        if (iconElements[detectedType]) {
+          iconElements[detectedType].classList.add('active');
         }
+      } else if (value.length === 0) {
+        cardBadge.classList.remove('visible');
       }
+    }
 
-      // Listen to card input
-      cardInput.addEventListener('input', updateCardDetection);
-      cardInput.addEventListener('keyup', updateCardDetection);
+    cardInput.addEventListener('input', updateCardDetection);
+    cardInput.addEventListener('keyup', updateCardDetection);
 
-      // -------------------------------------------------------------
-      // 5. Load order summary
-      // -------------------------------------------------------------
-      const orderContent = document.getElementById('orderContent');
-      const messageBox = document.getElementById('messageBox');
+    // -------------------------------------------------------------
+    // 5. Load order summary
+    // -------------------------------------------------------------
+    const orderContent = document.getElementById('orderContent');
+    const messageBox = document.getElementById('messageBox');
+    let currentCar = null;
 
-      function loadOrder() {
-        const carId = getParam('carId');
-        if (!carId) {
-          orderContent.innerHTML = `
-            <div style="text-align:center; padding:20px; color:#888;">
-              <i class="fas fa-exclamation-circle" style="font-size:2rem; display:block; margin-bottom:12px;"></i>
-              No car selected. Please go back and choose a car.
-            </div>
-          `;
-          return;
-        }
-
-        const car = findCarById(carId);
-        if (!car) {
-          orderContent.innerHTML = `
-            <div style="text-align:center; padding:20px; color:#888;">
-              <i class="fas fa-exclamation-circle" style="font-size:2rem; display:block; margin-bottom:12px;"></i>
-              Car not found.
-            </div>
-          `;
-          return;
-        }
-
-        const taxRate = 0.15;
-        const dailyRate = car.price;
-        const tax = dailyRate * taxRate;
-        const total = dailyRate + tax;
-
+    function loadOrder() {
+      const carId = getParam('carId');
+      if (!carId) {
         orderContent.innerHTML = `
-          <div class="order-car">
-            <img src="${car.image}" alt="${car.name}" />
-            <div class="car-info">
-              <h3>${car.name}</h3>
-              <div class="price">$${car.price} <small>/ day</small></div>
-            </div>
-          </div>
-          <div class="order-details">
-            <div class="row"><span>Daily Rate</span><span>$${car.price.toFixed(2)}</span></div>
-            <div class="row"><span>Tax (15%)</span><span>$${tax.toFixed(2)}</span></div>
-            <div class="row"><span>Insurance</span><span>Included</span></div>
-            <div class="row total"><span>Total</span><span>$${total.toFixed(2)}</span></div>
+          <div style="text-align:center; padding:20px; color:#888;">
+            <i class="fas fa-exclamation-circle" style="font-size:2rem; display:block; margin-bottom:12px;"></i>
+            No car selected. Please go back and choose a car.
           </div>
         `;
-
-        document.getElementById('checkoutForm').dataset.total = total.toFixed(2);
+        return;
       }
 
-      // -------------------------------------------------------------
-      // 6. Form submission
-      // -------------------------------------------------------------
-      const form = document.getElementById('checkoutForm');
-      const submitBtn = document.getElementById('submitBtn');
-      const btnText = document.getElementById('btnText');
-      const btnIcon = document.getElementById('btnIcon');
-      const btnSpinner = document.getElementById('btnSpinner');
+      const car = findCarById(carId);
+      currentCar = car;
+      
+      if (!car) {
+        orderContent.innerHTML = `
+          <div style="text-align:center; padding:20px; color:#888;">
+            <i class="fas fa-exclamation-circle" style="font-size:2rem; display:block; margin-bottom:12px;"></i>
+            Car not found.
+          </div>
+        `;
+        return;
+      }
 
-      function showMessage(message, type) {
-        messageBox.textContent = message;
+      const taxRate = 0.15;
+      const dailyRate = car.price;
+      const tax = dailyRate * taxRate;
+      const total = dailyRate + tax;
+
+      orderContent.innerHTML = `
+        <div class="order-car">
+          <img src="${car.image}" alt="${car.name}" />
+          <div class="car-info">
+            <h3>${car.name}</h3>
+            <div class="price">$${car.price} <small>/ day</small></div>
+          </div>
+        </div>
+        <div class="order-details">
+          <div class="row"><span>Daily Rate</span><span>$${car.price.toFixed(2)}</span></div>
+          <div class="row"><span>Tax (15%)</span><span>$${tax.toFixed(2)}</span></div>
+          <div class="row"><span>Insurance</span><span>Included</span></div>
+          <div class="row total"><span>Total</span><span>$${total.toFixed(2)}</span></div>
+        </div>
+      `;
+
+      document.getElementById('checkoutForm').dataset.total = total.toFixed(2);
+    }
+
+    // -------------------------------------------------------------
+    // 6. SAVE RESERVATION TO FIREBASE
+    // -------------------------------------------------------------
+    async function saveReservationToFirebase(bookingData) {
+      try {
+        const docRef = await addDoc(collection(db, 'reservations'), {
+          customerName: bookingData.fullName,
+          email: bookingData.email,
+          phone: bookingData.phone,
+          carName: bookingData.carName,
+          carId: bookingData.carId,
+          carPrice: bookingData.carPrice,
+          days: bookingData.days,
+          totalPrice: bookingData.totalPrice,
+          pickupDate: bookingData.pickupDate,
+          returnDate: bookingData.returnDate,
+          pickupLocation: bookingData.pickupLocation,
+          notes: bookingData.notes || '',
+          status: 'pending',
+          createdAt: new Date()
+        });
+        console.log('✅ Reservation saved to Firebase with ID:', docRef.id);
+        return true;
+      } catch (error) {
+        console.error('❌ Error saving reservation:', error);
+        throw error;
+      }
+    }
+
+    // -------------------------------------------------------------
+    // 7. Form submission
+    // -------------------------------------------------------------
+    const form = document.getElementById('checkoutForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const btnText = document.getElementById('btnText');
+    const btnIcon = document.getElementById('btnIcon');
+    const btnSpinner = document.getElementById('btnSpinner');
+
+    function showMessage(message, type) {
+      messageBox.textContent = message;
+      messageBox.className = 'message-box';
+      if (type === 'success') {
+        messageBox.classList.add('success');
+      } else if (type === 'error') {
+        messageBox.classList.add('error');
+      }
+      setTimeout(() => {
         messageBox.className = 'message-box';
-        if (type === 'success') {
-          messageBox.classList.add('success');
-        } else if (type === 'error') {
-          messageBox.classList.add('error');
-        }
-        setTimeout(() => {
-          messageBox.className = 'message-box';
-        }, 5000);
+      }, 6000);
+    }
+
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const fullName = document.getElementById('fullName').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const pickupLocation = document.getElementById('pickupLocation').value;
+      const pickupDate = document.getElementById('pickupDate').value;
+      const returnDate = document.getElementById('returnDate').value;
+      const cardNumber = document.getElementById('cardNumber').value.trim();
+      const expiryDate = document.getElementById('expiryDate').value.trim();
+      const cvv = document.getElementById('cvv').value.trim();
+      const notes = document.getElementById('notes').value.trim();
+      const terms = document.getElementById('terms').checked;
+
+      // Validation
+      if (!fullName || !email || !phone || !pickupLocation || !pickupDate || !returnDate ||
+          !cardNumber || !expiryDate || !cvv || !terms) {
+        showMessage('Please fill in all required fields and accept the terms.', 'error');
+        return;
       }
 
-      form.addEventListener('submit', function(e) {
-        e.preventDefault();
+      if (!email.includes('@') || !email.includes('.')) {
+        showMessage('Please enter a valid email address.', 'error');
+        return;
+      }
 
-        const fullName = document.getElementById('fullName').value.trim();
-        const email = document.getElementById('email').value.trim();
-        const phone = document.getElementById('phone').value.trim();
-        const pickupLocation = document.getElementById('pickupLocation').value;
-        const pickupDate = document.getElementById('pickupDate').value;
-        const returnDate = document.getElementById('returnDate').value;
-        const cardNumber = document.getElementById('cardNumber').value.trim();
-        const expiryDate = document.getElementById('expiryDate').value.trim();
-        const cvv = document.getElementById('cvv').value.trim();
-        const terms = document.getElementById('terms').checked;
+      const cardClean = cardNumber.replace(/\s/g, '');
+      if (cardClean.length < 13 || cardClean.length > 19) {
+        showMessage('Please enter a valid card number (13-19 digits).', 'error');
+        return;
+      }
 
-        if (!fullName || !email || !phone || !pickupLocation || !pickupDate || !returnDate ||
-            !cardNumber || !expiryDate || !cvv || !terms) {
-          showMessage('Please fill in all required fields and accept the terms.', 'error');
-          return;
-        }
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const pickup = new Date(pickupDate);
+      const returnD = new Date(returnDate);
 
-        if (!email.includes('@') || !email.includes('.')) {
-          showMessage('Please enter a valid email address.', 'error');
-          return;
-        }
+      if (pickup < today) {
+        showMessage('Pickup date cannot be in the past.', 'error');
+        return;
+      }
+      if (returnD <= pickup) {
+        showMessage('Return date must be after pickup date.', 'error');
+        return;
+      }
 
-        const cardClean = cardNumber.replace(/\s/g, '');
-        if (cardClean.length < 13 || cardClean.length > 19) {
-          showMessage('Please enter a valid card number (13-19 digits).', 'error');
-          return;
-        }
+      if (!currentCar) {
+        showMessage('Car information is missing. Please go back and select a car.', 'error');
+        return;
+      }
 
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const pickup = new Date(pickupDate);
-        const returnD = new Date(returnDate);
+      // Calculate days
+      const diffTime = Math.abs(returnD - pickup);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      
+      // Calculate total
+      const totalPrice = currentCar.price * diffDays;
 
-        if (pickup < today) {
-          showMessage('Pickup date cannot be in the past.', 'error');
-          return;
-        }
-        if (returnD <= pickup) {
-          showMessage('Return date must be after pickup date.', 'error');
-          return;
-        }
+      // Prepare booking data
+      const bookingData = {
+        fullName: fullName,
+        email: email,
+        phone: phone,
+        carName: currentCar.name,
+        carId: currentCar.id,
+        carPrice: currentCar.price,
+        days: diffDays,
+        totalPrice: totalPrice,
+        pickupDate: pickupDate,
+        returnDate: returnDate,
+        pickupLocation: pickupLocation,
+        notes: notes,
+        cardType: detectCardType(cardNumber) || 'Unknown'
+      };
 
-        submitBtn.disabled = true;
-        btnText.textContent = 'Processing...';
-        btnIcon.style.display = 'none';
-        btnSpinner.style.display = 'inline-block';
+      // Disable submit button
+      submitBtn.disabled = true;
+      btnText.textContent = 'Processing...';
+      btnIcon.style.display = 'none';
+      btnSpinner.style.display = 'inline-block';
 
+      try {
+        // Save to Firebase
+        await saveReservationToFirebase(bookingData);
+        
+        // Show success message
+        showMessage(`✅ Booking confirmed! Your reservation for the ${currentCar.name} has been saved. A confirmation email will be sent to ${email}.`, 'success');
+        btnText.textContent = '✓ Booked!';
+        btnSpinner.style.display = 'none';
+        
+        // Log to console
+        console.log('===== BOOKING CONFIRMED =====');
+        console.log('Car:', currentCar.name);
+        console.log('Customer:', fullName, email, phone);
+        console.log('Pickup:', pickupLocation, pickupDate);
+        console.log('Return:', returnDate);
+        console.log('Days:', diffDays);
+        console.log('Total: $' + totalPrice);
+        console.log('Card Type:', bookingData.cardType);
+        console.log('==============================');
+
+        // Reset button after delay
         setTimeout(() => {
-          showMessage('✅ Booking confirmed! Your rental has been reserved. A confirmation email has been sent.', 'success');
-          btnText.textContent = '✓ Booked!';
+          btnText.textContent = 'Confirm & Book';
+          btnIcon.style.display = 'inline-block';
           btnSpinner.style.display = 'none';
           submitBtn.disabled = false;
+        }, 4000);
 
-          const carId = getParam('carId');
-          const car = findCarById(carId);
-          console.log('===== BOOKING CONFIRMED =====');
-          console.log('Car:', car ? car.name : 'Unknown');
-          console.log('Customer:', fullName, email, phone);
-          console.log('Pickup:', pickupLocation, pickupDate);
-          console.log('Return:', returnDate);
-          console.log('Total:', form.dataset.total);
-          console.log('Card Type:', detectCardType(cardNumber) || 'Unknown');
-          console.log('==============================');
-
-          setTimeout(() => {
-            btnText.textContent = 'Confirm & Book';
-            btnIcon.style.display = 'inline-block';
-            btnSpinner.style.display = 'none';
-          }, 3000);
-
-        }, 2000);
-      });
-
-      // -------------------------------------------------------------
-      // 7. Card formatting
-      // -------------------------------------------------------------
-      document.getElementById('cardNumber').addEventListener('input', function(e) {
-        let value = this.value.replace(/\D/g, '');
-        if (value.length > 16) value = value.slice(0, 16);
-        let formatted = '';
-        for (let i = 0; i < value.length; i++) {
-          if (i > 0 && i % 4 === 0) formatted += ' ';
-          formatted += value[i];
-        }
-        this.value = formatted;
-        updateCardDetection();
-      });
-
-      document.getElementById('expiryDate').addEventListener('input', function(e) {
-        let value = this.value.replace(/\D/g, '');
-        if (value.length > 4) value = value.slice(0, 4);
-        if (value.length >= 2) {
-          const month = parseInt(value.slice(0, 2));
-          if (month > 12) {
-            this.value = '12' + value.slice(2);
-            return;
-          }
-        }
-        if (value.length > 2) {
-          this.value = value.slice(0, 2) + '/' + value.slice(2);
-        } else {
-          this.value = value;
-        }
-      });
-
-      document.getElementById('cvv').addEventListener('input', function(e) {
-        this.value = this.value.replace(/\D/g, '').slice(0, 4);
-      });
-
-      // -------------------------------------------------------------
-      // 8. Set default dates
-      // -------------------------------------------------------------
-      function setDefaultDates() {
-        const today = new Date();
-        const pickup = new Date(today);
-        pickup.setDate(today.getDate() + 3);
-        const returnD = new Date(today);
-        returnD.setDate(today.getDate() + 6);
-
-        const formatDate = (date) => {
-          const year = date.getFullYear();
-          const month = String(date.getMonth() + 1).padStart(2, '0');
-          const day = String(date.getDate()).padStart(2, '0');
-          return `${year}-${month}-${day}`;
-        };
-
-        document.getElementById('pickupDate').value = formatDate(pickup);
-        document.getElementById('returnDate').value = formatDate(returnD);
+      } catch (error) {
+        showMessage(`❌ Booking failed: ${error.message}. Please try again.`, 'error');
+        btnText.textContent = 'Confirm & Book';
+        btnIcon.style.display = 'inline-block';
+        btnSpinner.style.display = 'none';
+        submitBtn.disabled = false;
       }
+    });
 
-      // -------------------------------------------------------------
-      // 9. INIT
-      // -------------------------------------------------------------
-      loadOrder();
-      setDefaultDates();
+    // -------------------------------------------------------------
+    // 8. Card formatting
+    // -------------------------------------------------------------
+    document.getElementById('cardNumber').addEventListener('input', function(e) {
+      let value = this.value.replace(/\D/g, '');
+      if (value.length > 16) value = value.slice(0, 16);
+      let formatted = '';
+      for (let i = 0; i < value.length; i++) {
+        if (i > 0 && i % 4 === 0) formatted += ' ';
+        formatted += value[i];
+      }
+      this.value = formatted;
       updateCardDetection();
+    });
 
-    })();
+    document.getElementById('expiryDate').addEventListener('input', function(e) {
+      let value = this.value.replace(/\D/g, '');
+      if (value.length > 4) value = value.slice(0, 4);
+      if (value.length >= 2) {
+        const month = parseInt(value.slice(0, 2));
+        if (month > 12) {
+          this.value = '12' + value.slice(2);
+          return;
+        }
+      }
+      if (value.length > 2) {
+        this.value = value.slice(0, 2) + '/' + value.slice(2);
+      } else {
+        this.value = value;
+      }
+    });
+
+    document.getElementById('cvv').addEventListener('input', function(e) {
+      this.value = this.value.replace(/\D/g, '').slice(0, 4);
+    });
+
+    // -------------------------------------------------------------
+    // 9. Set default dates
+    // -------------------------------------------------------------
+    function setDefaultDates() {
+      const today = new Date();
+      const pickup = new Date(today);
+      pickup.setDate(today.getDate() + 3);
+      const returnD = new Date(today);
+      returnD.setDate(today.getDate() + 6);
+
+      const formatDate = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      };
+
+      document.getElementById('pickupDate').value = formatDate(pickup);
+      document.getElementById('returnDate').value = formatDate(returnD);
+    }
+
+    // -------------------------------------------------------------
+    // 10. INIT
+    // -------------------------------------------------------------
+    loadOrder();
+    setDefaultDates();
+    updateCardDetection();
+
   </script>
-
 </body>
 </html>

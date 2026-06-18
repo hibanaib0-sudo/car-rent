@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel · LuxeRent</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  
+  <!-- Firebase SDKs -->  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f0f2f5;
+      color: #1a1a2e;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .admin-container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 24px;
+    }
+
+    /* Header */
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #e0e0e0;
+    }
+
+    .admin-header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #0b0b0b;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .admin-header h1 i {
+      color: #a8a8a8;
+    }
+
+    .admin-header .back-link {
+      text-decoration: none;
+      color: #555;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid #ddd;
+      padding: 8px 20px;
+      border-radius: 40px;
+      transition: 0.2s;
+      font-size: 0.95rem;
+    }
+    .admin-header .back-link:hover {
+      background: #0b0b0b;
+      color: white;
+      border-color: #0b0b0b;
+    }
+
+    /* Form Card */
+    .form-card {
+      background: white;
+      border-radius: 28px;
+      padding: 40px;
+      box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+      border: 1px solid #f0f0f0;
+      margin-bottom: 32px;
+    }
+
+    .form-card h2 {
+      font-size: 1.6rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #0b0b0b;
+    }
+
+    .form-card .subtitle {
+      color: #777;
+      margin-bottom: 28px;
+      font-size: 0.95rem;
+    }
+
+    /* Form Groups */
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #1a1a2e;
+      font-size: 0.9rem;
+    }
+    .form-group label .required {
+      color: #e74c3c;
+      margin-left: 2px;
+    }
+    .form-group label .hint {
+      font-weight: 400;
+      color: #999;
+      font-size: 0.8rem;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 14px 18px;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      border: 2px solid #eaeaea;
+      border-radius: 14px;
+      transition: all 0.3s ease;
+      background: #fafafa;
+      color: #1a1a2e;
+      outline: none;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      border-color: #a8a8a8;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(168, 168, 168, 0.1);
+    }
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    /* Image URL preview */
+    .image-preview-container {
+      margin-top: 12px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #f5f5f5;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px dashed #ddd;
+      transition: 0.3s;
+    }
+    .image-preview-container img {
+      width: 100%;
+      max-height: 250px;
+      object-fit: cover;
+      display: none;
+    }
+    .image-preview-container img.visible {
+      display: block;
+    }
+    .image-preview-container .placeholder {
+      color: #aaa;
+      font-size: 0.9rem;
+      padding: 20px;
+      text-align: center;
+    }
+    .image-preview-container.has-image {
+      border-color: #a8a8a8;
+      border-style: solid;
+    }
+
+    /* Buttons */
+    .btn-submit {
+      width: 100%;
+      background: #0b0b0b;
+      color: white;
+      font-weight: 600;
+      font-size: 1.1rem;
+      padding: 16px;
+      border-radius: 60px;
+      border: none;
+      cursor: pointer;
+      transition: 0.2s;
+      letter-spacing: 0.3px;
+      box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .btn-submit:hover {
+      background: #2a2a2a;
+      transform: scale(1.02);
+      box-shadow: 0 18px 32px -10px rgba(0, 0, 0, 0.4);
+    }
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-submit i {
+      font-size: 1rem;
+    }
+
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #333;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.2s;
+      font-size: 0.9rem;
+    }
+    .btn-secondary:hover {
+      background: #ddd;
+    }
+
+    /* Status Messages */
+    .message-box {
+      display: none;
+      padding: 16px 20px;
+      border-radius: 14px;
+      margin-bottom: 20px;
+      font-weight: 500;
+      animation: slideDown 0.3s ease;
+    }
+    .message-box.success {
+      display: block;
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .message-box.error {
+      display: block;
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .message-box.info {
+      display: block;
+      background: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .spinner {
+      display: none;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Cars List */
+    .cars-list-section {
+      background: white;
+      border-radius: 28px;
+      padding: 32px;
+      box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+      border: 1px solid #f0f0f0;
+    }
+
+    .cars-list-section .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .cars-list-section h3 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #0b0b0b;
+    }
+
+    .cars-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .car-item {
+      background: #fafafa;
+      border-radius: 16px;
+      padding: 16px;
+      border: 1px solid #eee;
+      transition: 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .car-item:hover {
+      border-color: #a8a8a8;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .car-item img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 10px;
+      background: #eee;
+    }
+    .car-item .car-name {
+      font-weight: 600;
+      font-size: 1rem;
+      color: #0b0b0b;
+    }
+    .car-item .car-price {
+      font-size: 0.9rem;
+      color: #555;
+    }
+    .car-item .car-id {
+      font-size: 0.7rem;
+      color: #999;
+      font-family: monospace;
+      background: #f0f0f0;
+      padding: 2px 8px;
+      border-radius: 4px;
+      align-self: flex-start;
+    }
+    .car-item .btn-delete {
+      background: none;
+      border: none;
+      color: #e74c3c;
+      cursor: pointer;
+      font-size: 0.85rem;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: 0.2s;
+      align-self: flex-end;
+    }
+    .car-item .btn-delete:hover {
+      background: #fee;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #999;
+    }
+    .empty-state i {
+      font-size: 2.4rem;
+      color: #ddd;
+      display: block;
+      margin-bottom: 12px;
+    }
+
+    /* Status Tags for Reservations */
+    .status-tag {
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      display: inline-block;
+    }
+    .status-approved {
+      background: #d4edda;
+      color: #155724;
+    }
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+    .status-cancelled {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .action-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+    .btn-approve {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.8rem;
+      transition: 0.2s;
+    }
+    .btn-approve:hover {
+      background: #218838;
+    }
+    .btn-cancel {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.8rem;
+      transition: 0.2s;
+    }
+    .btn-cancel:hover {
+      background: #c82333;
+    }
+
+    /* Responsive */
+    @media (max-width: 700px) {
+      .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+      .admin-container {
+        margin: 20px auto;
+        padding: 0 16px;
+      }
+      .form-card {
+        padding: 24px;
+      }
+      .admin-header h1 {
+        font-size: 1.5rem;
+      }
+      .admin-header .back-link {
+        font-size: 0.85rem;
+        padding: 6px 14px;
+      }
+      .cars-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="admin-container">
+
+    <!-- HEADER -->
+    <header class="admin-header">
+      <h1><i class="fas fa-database"></i> Admin Panel</h1>
+      <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Site</a>
+    </header>
+
+    <!-- ===== FORM CARD ===== -->
+    <div class="form-card">
+      <h2><i class="fas fa-plus-circle" style="color: #a8a8a8; margin-right: 10px;"></i> Add New Car</h2>
+      <p class="subtitle">Fill in the details below to add a new vehicle to your fleet.</p>
+
+      <!-- Status Message -->
+      <div class="message-box" id="messageBox"></div>
+
+      <!-- FORM -->
+      <form id="carForm" novalidate>
+        <!-- Car Name -->
+        <div class="form-group">
+          <label>Car Name <span class="required">*</span></label>
+          <input type="text" id="carName" placeholder="e.g., Porsche 911" required />
+        </div>
+
+        <div class="form-row">
+          <!-- Price -->
+          <div class="form-group">
+            <label>Price per Day ($) <span class="required">*</span></label>
+            <input type="number" id="carPrice" placeholder="250" min="1" step="1" required />
+          </div>
+          <!-- Car ID (auto-generated or manual) -->
+          <div class="form-group">
+            <label>Car ID <span class="hint">(optional - auto-generated if empty)</span></label>
+            <input type="text" id="carId" placeholder="porsche-911" />
+          </div>
+        </div>
+
+        <!-- Image URL -->
+        <div class="form-group">
+          <label>Image URL <span class="required">*</span></label>
+          <input type="url" id="carImage" placeholder="https://images.unsplash.com/photo-..." required />
+          <div class="image-preview-container" id="imagePreview">
+            <span class="placeholder"><i class="fas fa-image"></i> Image preview will appear here</span>
+            <img id="previewImg" src="" alt="Car preview" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <!-- Transmission -->
+          <div class="form-group">
+            <label>Transmission <span class="required">*</span></label>
+            <select id="carTransmission" required>
+              <option value="Automatic">Automatic</option>
+              <option value="Manual">Manual</option>
+              <option value="CVT">CVT</option>
+              <option value="PDK">PDK</option>
+            </select>
+          </div>
+          <!-- Fuel Type -->
+          <div class="form-group">
+            <label>Fuel Type <span class="required">*</span></label>
+            <select id="carFuel" required>
+              <option value="Petrol">Petrol</option>
+              <option value="Diesel">Diesel</option>
+              <option value="Electric">Electric</option>
+              <option value="Hybrid">Hybrid</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <!-- Car Type -->
+          <div class="form-group">
+            <label>Car Type <span class="required">*</span></label>
+            <select id="carType" required>
+              <option value="Coupe">Coupe</option>
+              <option value="Sedan">Sedan</option>
+              <option value="SUV">SUV</option>
+              <option value="Sports Car">Sports Car</option>
+              <option value="Convertible">Convertible</option>
+              <option value="Hatchback">Hatchback</option>
+            </select>
+          </div>
+          <!-- Horsepower -->
+          <div class="form-group">
+            <label>Horsepower <span class="hint">(optional)</span></label>
+            <input type="text" id="carHp" placeholder="e.g., 379 hp" />
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <label>Description <span class="required">*</span></label>
+          <textarea id="carDescription" placeholder="Write a compelling description of the car..." required></textarea>
+        </div>
+
+        <!-- Engine (optional) -->
+        <div class="form-group">
+          <label>Engine <span class="hint">(optional)</span></label>
+          <input type="text" id="carEngine" placeholder="e.g., 3.0L Twin-Turbo H6" />
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn-submit" id="submitBtn">
+          <span id="btnText"><i class="fas fa-cloud-upload-alt"></i> Add Car to Fleet</span>
+          <span class="spinner" id="btnSpinner"></span>
+        </button>
+      </form>
+    </div>
+
+    <!-- ===== CARS LIST ===== -->
+    <section class="cars-list-section" id="carsListSection">
+      <div class="header-row">
+        <h3><i class="fas fa-car" style="color: #a8a8a8; margin-right: 10px;"></i> Your Fleet</h3>
+        <button class="btn-secondary" id="refreshBtn"><i class="fas fa-sync-alt"></i> Refresh</button>
+      </div>
+      <div id="carsList">
+        <!-- Cars will be loaded here by JavaScript -->
+        <div class="empty-state">
+          <i class="fas fa-car-side"></i>
+          <p>Loading your fleet...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== RESERVATIONS LIST ===== -->
+    <section class="cars-list-section" id="reservationsSection" style="margin-top: 32px;">
+      <div class="header-row">
+        <h3><i class="fas fa-calendar-check" style="color: #a8a8a8; margin-right: 10px;"></i> Client Reservations</h3>
+        <button class="btn-secondary" id="refreshReservationsBtn"><i class="fas fa-sync-alt"></i> Refresh Bookings</button>
+      </div>
+      <div id="reservationsList">
+        <div class="empty-state">
+          <i class="fas fa-spinner fa-pulse"></i>
+          <p>Loading incoming reservations...</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ===== FIREBASE CONFIGURATION ===== -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, collection, doc, setDoc, getDocs, deleteDoc, query, orderBy, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // Your Live Project Credentials
+    const firebaseConfig = {
+      apiKey: "AIzaSyC7g7VKQs0r9hxwIlnUJxMPdI7JEhxPqAg",
+      authDomain: "car-rental-site-28fd2.firebaseapp.com",
+      projectId: "car-rental-site-28fd2",
+      storageBucket: "car-rental-site-28fd2.firebasestorage.app",
+      messagingSenderId: "43976613134",
+      appId: "1:43976613134:web:3c4bbccea761ee278dcb5f"
+    };
+
+    // Initialize Firebase and Firestore Database
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // DOM REFERENCES
+    const form = document.getElementById('carForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const btnText = document.getElementById('btnText');
+    const btnSpinner = document.getElementById('btnSpinner');
+    const messageBox = document.getElementById('messageBox');
+    const carsList = document.getElementById('carsList');
+
+    const carName = document.getElementById('carName');
+    const carPrice = document.getElementById('carPrice');
+    const carId = document.getElementById('carId');
+    const carImage = document.getElementById('carImage');
+    const carTransmission = document.getElementById('carTransmission');
+    const carFuel = document.getElementById('carFuel');
+    const carType = document.getElementById('carType');
+    const carHp = document.getElementById('carHp');
+    const carDescription = document.getElementById('carDescription');
+    const carEngine = document.getElementById('carEngine');
+
+    // IMAGE PREVIEW
+    const previewContainer = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
+
+    carImage.addEventListener('input', function() {
+      const url = this.value.trim();
+      if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
+        previewImg.src = url;
+        previewImg.classList.add('visible');
+        previewContainer.classList.add('has-image');
+        const placeholder = previewContainer.querySelector('.placeholder');
+        if (placeholder) placeholder.style.display = 'none';
+      } else {
+        previewImg.classList.remove('visible');
+        previewContainer.classList.remove('has-image');
+        const placeholder = previewContainer.querySelector('.placeholder');
+        if (placeholder) placeholder.style.display = 'block';
+      }
+    });
+
+    // MESSAGE BOX HELPER
+    function showMessage(message, type = 'info') {
+      messageBox.textContent = message;
+      messageBox.className = 'message-box';
+      messageBox.classList.add(type);
+      clearTimeout(window.messageTimeout);
+      window.messageTimeout = setTimeout(() => {
+        messageBox.className = 'message-box';
+      }, 5000);
+    }
+
+    // GENERATE SLUG
+    function generateSlug(name) {
+      return name
+        .toLowerCase()
+        .trim()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/[\s_-]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+    }
+
+    // AUTOMATIC SLUG FILL
+    carName.addEventListener('input', function() {
+      if (!carId.value || carId.value === '') {
+        carId.value = generateSlug(this.value);
+      }
+    });
+
+    // SUBMIT EVENT HANDLER
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const name = carName.value.trim();
+      const price = parseInt(carPrice.value);
+      const image = carImage.value.trim();
+      const transmission = carTransmission.value;
+      const fuel = carFuel.value;
+      const type = carType.value;
+      const hp = carHp.value.trim();
+      const description = carDescription.value.trim();
+      const engine = carEngine.value.trim();
+
+      let id = carId.value.trim();
+      if (!id) {
+        id = generateSlug(name);
+        carId.value = id;
+      }
+
+      if (!name) { showMessage('Please enter a car name.', 'error'); return; }
+      if (!price || price < 1) { showMessage('Please enter a valid price.', 'error'); return; }
+      if (!image) { showMessage('Please enter an image URL.', 'error'); return; }
+      if (!description) { showMessage('Please enter a description.', 'error'); return; }
+
+      const carData = {
+        id: id,
+        name: name,
+        price: price,
+        image: image,
+        transmission: transmission,
+        fuel: fuel,
+        type: type,
+        hp: hp || 'N/A',
+        description: description,
+        engine: engine || 'N/A',
+        createdAt: new Date()
+      };
+
+      submitBtn.disabled = true;
+      btnText.innerHTML = 'Adding to fleet...';
+      btnSpinner.style.display = 'inline-block';
+
+      try {
+        await setDoc(doc(db, 'cars', id), carData);
+        showMessage(`✅ "${name}" has been added to your fleet successfully!`, 'success');
+        form.reset();
+        carId.value = '';
+        previewImg.classList.remove('visible');
+        previewContainer.classList.remove('has-image');
+        const placeholder = previewContainer.querySelector('.placeholder');
+        if (placeholder) placeholder.style.display = 'block';
+        
+        loadCars();
+      } catch (error) {
+        console.error('Error adding car:', error);
+        showMessage(`❌ Error: ${error.message}`, 'error');
+      } finally {
+        submitBtn.disabled = false;
+        btnText.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Add Car to Fleet';
+        btnSpinner.style.display = 'none';
+      }
+    });
+
+    // LOAD CARS
+    async function loadCars() {
+      carsList.innerHTML = `<div class="empty-state"><i class="fas fa-spinner fa-pulse"></i><p>Loading your fleet...</p></div>`;
+      try {
+        const q = query(collection(db, 'cars'), orderBy('createdAt', 'desc'));
+        const snapshot = await getDocs(q);
+
+        if (snapshot.empty) {
+          carsList.innerHTML = `
+            <div class="empty-state">
+              <i class="fas fa-car-side"></i>
+              <p>No cars in your fleet yet.<br>Add your first car using the form above!</p>
+            </div>
+          `;
+          return;
+        }
+
+        let html = '<div class="cars-grid">';
+        snapshot.forEach(docSnap => {
+          const car = docSnap.data();
+          html += `
+            <div class="car-item" data-id="${docSnap.id}">
+              <img src="${car.image || 'https://via.placeholder.com/300x200/eee/999?text=No+Image'}" alt="${car.name}" loading="lazy" />
+              <div class="car-name">${car.name}</div>
+              <div class="car-price">${car.price} MAD / day</div>
+              <div class="car-id">${docSnap.id}</div>
+              <button class="btn-delete" data-id="${docSnap.id}">
+                <i class="fas fa-trash-alt"></i> Delete
+              </button>
+            </div>
+          `;
+        });
+        html += '</div>';
+        carsList.innerHTML = html;
+
+        document.querySelectorAll('.btn-delete').forEach(btn => {
+          btn.addEventListener('click', async function() {
+            const docId = this.dataset.id;
+            if (confirm(`Are you sure you want to delete this car?`)) {
+              await deleteCar(docId);
+            }
+          });
+        });
+      } catch (error) {
+        console.error('Error loading cars:', error);
+        carsList.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-exclamation-circle" style="color:#e74c3c;"></i>
+            <p>Error loading cars: ${error.message}</p>
+          </div>
+        `;
+      }
+    }
+
+    // DELETE CAR
+    async function deleteCar(docId) {
+      try {
+        await deleteDoc(doc(db, 'cars', docId));
+        showMessage(`✅ Car deleted successfully!`, 'success');
+        loadCars();
+      } catch (error) {
+        console.error('Error deleting car:', error);
+        showMessage(`❌ Error deleting: ${error.message}`, 'error');
+      }
+    }
+
+    // LOAD RESERVATIONS
+    async function loadReservations() {
+      const resListDiv = document.getElementById('reservationsList');
+      resListDiv.innerHTML = `<div class="empty-state"><i class="fas fa-spinner fa-pulse"></i><p>Loading database reservations...</p></div>`;
+      
+      try {
+        const q = query(collection(db, 'reservations'), orderBy('createdAt', 'desc'));
+        const snapshot = await getDocs(q);
+
+        if (snapshot.empty) {
+          resListDiv.innerHTML = `<div class="empty-state"><i class="fas fa-calendar-times"></i><p>No reservations found in the system yet.</p></div>`;
+          return;
+        }
+
+        let html = '<div class="cars-grid">';
+        snapshot.forEach(docSnap => {
+          const res = docSnap.data();
+          let statusClass = 'status-pending';
+          if (res.status === 'approved') statusClass = 'status-approved';
+          else if (res.status === 'cancelled') statusClass = 'status-cancelled';
+          
+          html += `
+            <div class="car-item">
+              <div class="car-name"><i class="fas fa-user"></i> ${res.customerName || 'Unknown'}</div>
+              <div class="car-price"><strong>Car:</strong> ${res.carName || 'Unknown'}</div>
+              <div class="car-price"><strong>Phone:</strong> ${res.phone || 'N/A'}</div>
+              <div class="car-price"><strong>Days:</strong> ${res.days || 'N/A'} days</div>
+              <div class="car-price"><strong>Total:</strong> $${res.totalPrice || 'N/A'}</div>
+              <span class="status-tag ${statusClass}">${res.status || 'pending'}</span>
+              
+              <div class="action-row">
+                <button class="btn-approve" data-id="${docSnap.id}" data-action="approved">Approve</button>
+                <button class="btn-cancel" data-id="${docSnap.id}" data-action="cancelled">Cancel</button>
+              </div>
+            </div>
+          `;
+        });
+        html += '</div>';
+        resListDiv.innerHTML = html;
+
+        // Button Click Handler Events
+        resListDiv.querySelectorAll('button').forEach(btn => {
+          btn.addEventListener('click', async function() {
+            const id = this.dataset.id;
+            const nextStatus = this.dataset.action;
+            if (id && nextStatus) {
+              await updateReservationStatus(id, nextStatus);
+            }
+          });
+        });
+
+      } catch (error) {
+        console.error("Error reading bookings: ", error);
+        resListDiv.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-exclamation-circle" style="color:#e74c3c;"></i>
+            <p>Error loading reservations: ${error.message}</p>
+          </div>
+        `;
+      }
+    }
+
+    // UPDATE RESERVATION STATUS
+    async function updateReservationStatus(resId, targetStatus) {
+      try {
+        const docRef = doc(db, 'reservations', resId);
+        await updateDoc(docRef, { status: targetStatus });
+        showMessage(`✅ Status changed to ${targetStatus}!`, 'success');
+        loadReservations();
+      } catch (error) {
+        showMessage(`❌ Error updating status: ${error.message}`, 'error');
+      }
+    }
+
+    // REFRESH BUTTONS
+    document.getElementById('refreshBtn').addEventListener('click', function() {
+      loadCars();
+      showMessage('🔄 Fleet refreshed!', 'info');
+    });
+
+    document.getElementById('refreshReservationsBtn').addEventListener('click', function() {
+      loadReservations();
+      showMessage('🔄 Reservations refreshed!', 'info');
+    });
+
+    // ===== AUTHENTICATION =====
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        // If not logged in, send them to the login page!
+        window.location.href = 'login.html';
+      } else {
+        // If logged in, safely load the data!
+        loadCars();
+        loadReservations(); // 👈 FIXED: Now reservations load on page load!
+      }
+    });
+
+  </script>
+
+</body>
+</html>
